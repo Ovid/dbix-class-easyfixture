@@ -2,6 +2,7 @@ package DBIx::Class::SimpleFixture;
 
 our $VERSION = '0.01';
 use Moose;
+use Carp;
 use namespace::autoclean;
 
 has 'schema' => (
@@ -9,6 +10,53 @@ has 'schema' => (
     isa      => 'DBIx::Class::Schema',
     required => 1,
 );
+has '_in_transaction' => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+    writer  => '_set_in_transaction',
+);
+
+sub load {
+    my ( $self, @fixtures ) = @_;
+    unless ( $self->_in_transaction ) {
+        $self->schema->txn_begin;
+        $self->_set_in_transaction(1);
+    }
+    $self->_load( $self->get_definition($_) ) foreach @fixtures;
+    return 1;
+}
+
+sub _load {
+    my ( $self, $definition ) = @_;
+
+    my $class = $definition->{class};
+    my $data  = $definition->{data};
+
+    my $object = $self->schema->resultset($class)->create($data);
+}
+
+sub unload {
+    my $self = shift;
+    if ( $self->_in_transaction ) {
+        $self->schema->txn_rollback;
+        $self->_set_in_transaction(0);
+    }
+    else {
+        # XXX I don't think I really need this
+        #carp("finish() called without load()");
+    }
+    return 1;
+}
+
+sub get_definition {
+    croak("You must override get_definition() in a subclass");
+}
+
+sub DEMOLISH {
+    my $self = shift;
+    $self->unload;
+}
 
 __PACKAGE__->meta->make_immutable;
 
