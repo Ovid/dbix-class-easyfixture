@@ -6,6 +6,6 @@ use Test::Most;
     extends 'DBIx::Class::SimpleFixture';
 }
 
-my $fix
+pass('start working');
 
 done_testing;
