@@ -9,6 +9,11 @@ my $birthday = DateTime->new(
     month => 2,
     day   => 12,
 );
+my $purchase_date = DateTime->new(
+    year  => 2011,
+    month => 12,
+    day   => 23,
+);
 
 my %definition_for = (
     person_without_customer => {
@@ -19,6 +24,25 @@ my %definition_for = (
             birthday => $birthday,
         },
     },
+    person_with_customer => {
+        class => 'Person',
+        data  => {
+            name     => "sally",
+            email    => 'person@customer.com',
+            birthday => $birthday,
+        },
+        with => [qw/basic_customer/],
+    },
+    basic_customer => {
+        class         => 'Customer',
+        data          => { first_purchase => $purchase_date },
+        want_related  => {
+            'Person' => {
+                me   => 'person_id',
+                them => 'person_id',
+            },
+        },
+    }
 );
 
 sub get_definition {

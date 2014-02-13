@@ -28,12 +28,38 @@ sub load {
 }
 
 sub _load {
-    my ( $self, $definition ) = @_;
+    my ( $self, $definition, @related ) = @_;
 
     my $class = $definition->{class};
     my $data  = $definition->{data};
 
     my $object = $self->schema->resultset($class)->create($data);
+    unshift @related => $object;
+
+    my $with = $definition->{with} or return $object;
+
+    # check for circular definitions!
+    foreach my $fixture (@$with) {
+        my $definition = $self->get_definition($fixture);
+        my %data       = %{ $definition->{data} };
+        if ( my $want_related = $definition->{want_related} ) {
+            foreach my $related_object (@related) {
+                my $related_source = $related_object->result_source->source_name;
+
+                # keeping it simple for now. Warn?
+                my $methods = $want_related->{$related_source} or next;
+                my $related_method = $methods->{them};
+                $data{ $methods->{me} } = $related_object->$related_method;
+            }
+        }
+
+        $self->_load(
+            {   class => $definition->{class},
+                data  => \%data,
+            }
+        );
+    }
+    return $object;
 }
 
 sub unload {
