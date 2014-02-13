@@ -31,12 +31,12 @@ my %definition_for = (
             email    => 'person@customer.com',
             birthday => $birthday,
         },
-        with => [qw/basic_customer/],
+        children => [qw/basic_customer/],
     },
     basic_customer => {
         class         => 'Customer',
         data          => { first_purchase => $purchase_date },
-        want_related  => {
+        parents  => {
             'Person' => {
                 me   => 'person_id',
                 them => 'person_id',

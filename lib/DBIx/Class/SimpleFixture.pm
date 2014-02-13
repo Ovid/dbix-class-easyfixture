@@ -36,18 +36,19 @@ sub _load {
     my $object = $self->schema->resultset($class)->create($data);
     unshift @related => $object;
 
-    my $with = $definition->{with} or return $object;
+    my $children = $definition->{children} or return $object;
 
     # check for circular definitions!
-    foreach my $fixture (@$with) {
+    foreach my $fixture (@$children) {
         my $definition = $self->get_definition($fixture);
         my %data       = %{ $definition->{data} };
-        if ( my $want_related = $definition->{want_related} ) {
+        if ( my $parents = $definition->{parents} ) {
             foreach my $related_object (@related) {
-                my $related_source = $related_object->result_source->source_name;
+                my $related_source
+                  = $related_object->result_source->source_name;
 
                 # keeping it simple for now. Warn?
-                my $methods = $want_related->{$related_source} or next;
+                my $methods = $parents->{$related_source} or next;
                 my $related_method = $methods->{them};
                 $data{ $methods->{me} } = $related_object->$related_method;
             }
