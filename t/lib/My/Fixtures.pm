@@ -38,8 +38,8 @@ my %definition_for = (
         data          => { first_purchase => $purchase_date },
         parents  => {
             'Person' => {
-                me   => 'person_id',
-                them => 'person_id',
+                me     => 'person_id',
+                parent => 'person_id',
             },
         },
     }
@@ -49,6 +49,8 @@ sub get_definition {
     my ( $self, $name ) = @_;
     return $definition_for{$name};
 }
+
+sub all_fixture_names { return keys %definition_for }
 
 __PACKAGE__->meta->make_immutable;
 

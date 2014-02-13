@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
     },
     requires => {
         'DBIx::Class' => 0,
+        'aliased'     => 0,
     },
     add_to_cleanup     => ['DBIx-Class-SimpleFixture-*'],
     create_makefile_pl => 'traditional',

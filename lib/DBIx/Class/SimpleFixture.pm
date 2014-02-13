@@ -3,6 +3,7 @@ package DBIx::Class::SimpleFixture;
 our $VERSION = '0.01';
 use Moose;
 use Carp;
+use aliased 'DBIx::Class::SimpleFixture::Definition';
 use namespace::autoclean;
 
 has 'schema' => (
@@ -23,41 +24,55 @@ sub load {
         $self->schema->txn_begin;
         $self->_set_in_transaction(1);
     }
-    $self->_load( $self->get_definition($_) ) foreach @fixtures;
+    $self->_load( $self->get_definition_object($_) ) foreach @fixtures;
     return 1;
+}
+
+sub get_definition_object {
+    my ( $self, $fixture ) = @_;
+    return Definition->new(
+        {   name       => $fixture,
+            definition => $self->get_definition($fixture),
+        }
+    );
 }
 
 sub _load {
     my ( $self, $definition, @related ) = @_;
 
-    my $class = $definition->{class};
-    my $data  = $definition->{data};
+    my $class = $definition->resultset_class;
+    my $data  = $definition->constructor_data;
 
     my $object = $self->schema->resultset($class)->create($data);
     unshift @related => $object;
 
-    my $children = $definition->{children} or return $object;
+    my $children = $definition->children or return $object;
 
     # check for circular definitions!
     foreach my $fixture (@$children) {
-        my $definition = $self->get_definition($fixture);
-        my %data       = %{ $definition->{data} };
-        if ( my $parents = $definition->{parents} ) {
+        my $definition = $self->get_definition_object($fixture);
+        my %data       = %{ $definition->constructor_data };
+        if ( my $parents = $definition->parents ) {
             foreach my $related_object (@related) {
                 my $related_source
                   = $related_object->result_source->source_name;
 
                 # keeping it simple for now. Warn?
                 my $methods = $parents->{$related_source} or next;
-                my $related_method = $methods->{them};
+                my $related_method = $methods->{parent};
                 $data{ $methods->{me} } = $related_object->$related_method;
             }
         }
 
         $self->_load(
-            {   class => $definition->{class},
-                data  => \%data,
-            }
+            Definition->new(
+                {   name       => $fixture,
+                    definition => {
+                        class => $definition->resultset_class,
+                        data  => \%data,
+                    }
+                }
+            )
         );
     }
     return $object;
