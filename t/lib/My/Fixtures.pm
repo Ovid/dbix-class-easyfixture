@@ -31,7 +31,7 @@ my %definition_for = (
             email    => 'person@customer.com',
             birthday => $birthday,
         },
-        children => [qw/basic_customer/],
+        next => [qw/basic_customer/],
     },
     basic_customer => {
         class    => 'Customer',

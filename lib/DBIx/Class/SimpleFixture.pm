@@ -75,10 +75,10 @@ sub _load {
     my $object = $self->_get_object($definition);
     unshift @related => $object;
 
-    my $children = $definition->children or return $object;
+    my $next = $definition->next or return $object;
 
     # check for circular definitions!
-    foreach my $fixture (@$children) {
+    foreach my $fixture (@$next) {
         my $definition = $self->get_definition_object($fixture);
         my %data       = %{ $definition->constructor_data };
         if ( my $requires = $definition->requires ) {

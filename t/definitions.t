@@ -41,8 +41,8 @@ eq_or_diff $definition->constructor_data,
     birthday => $birthday,
   },
   '... and the correct data definition';
-eq_or_diff $definition->children, [qw/basic_customer/],
-  '... and the correct children';
+eq_or_diff $definition->next, [qw/basic_customer/],
+  '... and the correct next';
 ok !defined $definition->requires,
   '... and no requirements if they are not defined';
 

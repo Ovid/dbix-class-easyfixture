@@ -26,13 +26,13 @@ around 'BUILDARGS' => sub {
 sub BUILD {
     my $self = shift;
     $self->_validate_class_and_data;
-    $self->_validate_children;
+    $self->_validate_next;
     $self->_validate_required_objects;
 }
 
 sub resultset_class  { shift->definition->{class} }
 sub constructor_data { shift->definition->{data} }
-sub children         { shift->definition->{children} }
+sub next             { shift->definition->{next} }
 sub requires         { shift->definition->{requires} }
 
 sub _validate_class_and_data {
@@ -49,18 +49,18 @@ sub _validate_class_and_data {
     }
 }
 
-sub _validate_children {
+sub _validate_next {
     my $self = shift;
-    my $children = $self->children or return;
+    my $next = $self->next or return;
 
-    $children = [$children] unless 'ARRAY' eq ref $children;
-    foreach my $child (@$children) {
+    $next = [$next] unless 'ARRAY' eq ref $next;
+    foreach my $child (@$next) {
         if ( !defined $child ) {
             my $name = $self->name;
             croak("Undefined child found for $name");
         }
         if ( my $ref = ref $child ) {
-            croak("All children must be strings, not '$ref'");
+            croak("All items for 'next' must be strings, not '$ref'");
         }
     }
 }
