@@ -17,6 +17,17 @@ has '_in_transaction' => (
     default => 0,
     writer  => '_set_in_transaction',
 );
+has '_cache' => (
+    traits  => ['Hash'],
+    is      => 'ro',
+    isa     => 'HashRef',
+    default => sub { {} },
+    handles => {
+        _set_fixture => 'set',
+        _get_fixture => 'get',
+        _clear       => 'clear',
+    },
+);
 
 sub load {
     my ( $self, @fixtures ) = @_;
@@ -37,13 +48,31 @@ sub get_definition_object {
     );
 }
 
+sub _get_object {
+    my ( $self, $definition ) = @_;
+
+    my $name   = $definition->name;
+    my $object = $self->_get_fixture($name);
+    unless ($object) {
+        $object = $self->schema->resultset( $definition->resultset_class )
+          ->create( $definition->constructor_data );
+        $self->_set_fixture( $name, $object );
+    }
+    return $object;
+}
+
 sub _load {
     my ( $self, $definition, @related ) = @_;
 
-    my $class = $definition->resultset_class;
-    my $data  = $definition->constructor_data;
+    # if we're trying to load a child before its parents, we fetch the parents
+    # first
+    if ( my $parents = $definition->parents ) {
+        foreach my $parent ( keys %$parents ) {
+            $self->_load( $self->get_definition_object($parent) );
+        }
+    }
 
-    my $object = $self->schema->resultset($class)->create($data);
+    my $object = $self->_get_object($definition);
     unshift @related => $object;
 
     my $children = $definition->children or return $object;
@@ -53,17 +82,12 @@ sub _load {
         my $definition = $self->get_definition_object($fixture);
         my %data       = %{ $definition->constructor_data };
         if ( my $parents = $definition->parents ) {
-            foreach my $related_object (@related) {
-                my $related_source
-                  = $related_object->result_source->source_name;
-
-                # keeping it simple for now. Warn?
-                my $methods = $parents->{$related_source} or next;
+            while ( my ( $parent, $methods ) = each %$parents ) {
+                my $related_object = $self->_get_fixture($parent);
                 my $related_method = $methods->{parent};
                 $data{ $methods->{me} } = $related_object->$related_method;
             }
         }
-
         $self->_load(
             Definition->new(
                 {   name       => $fixture,
@@ -82,6 +106,7 @@ sub unload {
     my $self = shift;
     if ( $self->_in_transaction ) {
         $self->schema->txn_rollback;
+        $self->_clear;
         $self->_set_in_transaction(0);
     }
     else {

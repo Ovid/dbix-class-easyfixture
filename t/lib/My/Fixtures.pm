@@ -37,7 +37,7 @@ my %definition_for = (
         class         => 'Customer',
         data          => { first_purchase => $purchase_date },
         parents  => {
-            'Person' => {
+            person_with_customer => {
                 me     => 'person_id',
                 parent => 'person_id',
             },
