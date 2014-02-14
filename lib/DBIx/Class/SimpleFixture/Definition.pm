@@ -24,16 +24,16 @@ around 'BUILDARGS' => sub {
 };
 
 sub BUILD {
-    my $self  = shift;
+    my $self = shift;
     $self->_validate_class_and_data;
     $self->_validate_children;
-    $self->_validate_parents;
+    $self->_validate_required_objects;
 }
 
 sub resultset_class  { shift->definition->{class} }
 sub constructor_data { shift->definition->{data} }
 sub children         { shift->definition->{children} }
-sub parents          { shift->definition->{parents} }
+sub requires         { shift->definition->{requires} }
 
 sub _validate_class_and_data {
     my $self = shift;
@@ -65,29 +65,28 @@ sub _validate_children {
     }
 }
 
-sub _validate_parents {
+sub _validate_required_objects {
     my $self = shift;
-    my $parents = $self->parents or return;
+    my $requires = $self->requires or return;
 
-    unless ( 'HASH' eq ref $parents ) {
+    unless ( 'HASH' eq ref $requires ) {
         my $name = $self->resultset_class;
-        croak("parents for '$name' does not appear to be a hashref");
+        croak("$name.requires does not appear to be a hashref");
     }
 
-    while ( my ( $parent, $methods ) = each %$parents ) {
-        my $name = $self->resultset_class . ".parents.$parent";
-        if ( my @bad_keys = grep { !/^(?:me|parent)$/ } keys %$methods ) {
+    while ( my ( $parent, $methods ) = each %$requires ) {
+        my $name = $self->resultset_class . ".requires.$parent";
+        if ( my @bad_keys = grep { !/^(?:our|their)$/ } keys %$methods ) {
             croak("Bad keys found for $name: @bad_keys");
         }
-        unless ( my $my_method = $methods->{me} ) {
-            croak("$name requires 'me'");
+        unless ( exists $methods->{our} ) {
+            croak("$name requires 'our'");
         }
-        unless ( my $parent_method = $methods->{parent} ) {
-            croak("$name required 'parent'");
+        unless ( exists $methods->{their} ) {
+            croak("$name required 'their'");
         }
     }
 }
-
 
 __PACKAGE__->meta->make_immutable;
 

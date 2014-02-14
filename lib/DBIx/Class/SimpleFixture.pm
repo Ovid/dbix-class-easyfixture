@@ -66,8 +66,8 @@ sub _load {
 
     # if we're trying to load a child before its parents, we fetch the parents
     # first
-    if ( my $parents = $definition->parents ) {
-        foreach my $parent ( keys %$parents ) {
+    if ( my $requires = $definition->requires ) {
+        foreach my $parent ( keys %$requires ) {
             $self->_load( $self->get_definition_object($parent) );
         }
     }
@@ -81,11 +81,11 @@ sub _load {
     foreach my $fixture (@$children) {
         my $definition = $self->get_definition_object($fixture);
         my %data       = %{ $definition->constructor_data };
-        if ( my $parents = $definition->parents ) {
-            while ( my ( $parent, $methods ) = each %$parents ) {
+        if ( my $requires = $definition->requires ) {
+            while ( my ( $parent, $methods ) = each %$requires ) {
                 my $related_object = $self->_get_fixture($parent);
-                my $related_method = $methods->{parent};
-                $data{ $methods->{me} } = $related_object->$related_method;
+                my $related_method = $methods->{their};
+                $data{ $methods->{our} } = $related_object->$related_method;
             }
         }
         $self->_load(

@@ -34,12 +34,12 @@ my %definition_for = (
         children => [qw/basic_customer/],
     },
     basic_customer => {
-        class         => 'Customer',
-        data          => { first_purchase => $purchase_date },
-        parents  => {
+        class    => 'Customer',
+        data     => { first_purchase => $purchase_date },
+        requires => {
             person_with_customer => {
-                me     => 'person_id',
-                parent => 'person_id',
+                our   => 'person_id',
+                their => 'person_id',
             },
         },
     }

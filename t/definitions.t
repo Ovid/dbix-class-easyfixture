@@ -43,7 +43,7 @@ eq_or_diff $definition->constructor_data,
   '... and the correct data definition';
 eq_or_diff $definition->children, [qw/basic_customer/],
   '... and the correct children';
-ok !defined $definition->parents,
-  '... and no parents if they are not defined';
+ok !defined $definition->requires,
+  '... and no requirements if they are not defined';
 
 done_testing;
