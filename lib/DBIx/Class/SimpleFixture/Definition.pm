@@ -19,12 +19,16 @@ has 'definition' => (
 around 'BUILDARGS' => sub {
     my $orig = shift;
     my $self = shift;
-    my $args = dclone(shift);
-    $self->$orig($args);
+    my $args = $_[0];
+    if ( 'HASH' ne ref $_[0] ) {
+        $args = {@_};
+    }
+    $self->$orig( dclone($args) );
 };
 
 sub BUILD {
     my $self = shift;
+    $self->_validate_keys;
     $self->_validate_class_and_data;
     $self->_validate_next;
     $self->_validate_required_objects;
@@ -34,6 +38,19 @@ sub resultset_class  { shift->definition->{class} }
 sub constructor_data { shift->definition->{data} }
 sub next             { shift->definition->{next} }
 sub requires         { shift->definition->{requires} }
+
+sub _validate_keys {
+    my $self       = shift;
+    my $name       = $self->name;
+    my %definition = %{ $self->definition };    # shallow copy currently ok
+    unless ( keys %definition ) {
+        croak("Fixture '$name' had no keys");
+    }
+    delete @definition{qw/class data next requires/};
+    if ( my @unknown = sort keys %definition ) {
+        croak("Fixture '$name' had unknown keys: @unknown");
+    }
+}
 
 sub _validate_class_and_data {
     my $self = shift;
@@ -54,36 +71,36 @@ sub _validate_next {
     my $next = $self->next or return;
 
     $next = [$next] unless 'ARRAY' eq ref $next;
+    my $name = $self->name;
     foreach my $child (@$next) {
         if ( !defined $child ) {
-            my $name = $self->name;
-            croak("Undefined child found for $name");
+            croak("Fixture '$name' had an undefined element in 'next'");
         }
-        if ( my $ref = ref $child ) {
-            croak("All items for 'next' must be strings, not '$ref'");
+        if ( ref $child ) {
+            croak("Fixture '$name' had non-string elements in 'next'");
         }
     }
 }
 
 sub _validate_required_objects {
     my $self = shift;
-    my $requires = $self->requires or return;
 
+    my $name = join '.' => $self->name, $self->resultset_class, 'requires';
+
+    my $requires = $self->requires or return;
     unless ( 'HASH' eq ref $requires ) {
-        my $name = $self->resultset_class;
-        croak("$name.requires does not appear to be a hashref");
+        croak("$name does not appear to be a hashref");
     }
 
     while ( my ( $parent, $methods ) = each %$requires ) {
-        my $name = $self->resultset_class . ".requires.$parent";
         if ( my @bad_keys = grep { !/^(?:our|their)$/ } keys %$methods ) {
-            croak("Bad keys found for $name: @bad_keys");
+            croak("'$name' had bad keys: @bad_keys");
         }
         unless ( exists $methods->{our} ) {
-            croak("$name requires 'our'");
+            croak("'$name' requires 'our'");
         }
         unless ( exists $methods->{their} ) {
-            croak("$name required 'their'");
+            croak("'$name' requires 'their'");
         }
     }
 }
