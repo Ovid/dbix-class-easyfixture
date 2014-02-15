@@ -145,3 +145,13 @@ sub _validate_required_objects {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=head1 NAME
+
+DBIx::Class::EasyFixture::Definition - Validate fixture definitions
+
+=head2 DESCRIPTION
+
+For internal use only. Maybe I'll document it some day.
