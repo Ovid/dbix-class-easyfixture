@@ -88,7 +88,7 @@ Its C<DBIx::Class> definition might look like this:
 (After this, we won't show much of the C<DBIx::Class> code).
 
 To define a fixture with a birthday, the email C<not@home.com> and the name
-C<bob>, you would might have this:
+C<bob>, you might have this:
 
     basic_person => {
         new   => 'Person',
@@ -176,9 +176,9 @@ OK, that was easy, but what about this?
 The C<customers> table has a unique constraint against C<person_id>. That
 means each person might be a customer in a one-to-one relation (to be fair,
 one-to-one relationships are merely a special case of one-to-many
-relationships and easy works the same way in this module). We can turn 'bob'
-into a customer by adding a new fixture, but for this example, 'bob' won't be
-a customer. Instead, we'll create a separate person, sally, and make them a
+relationships and works the same way in this module). We can turn 'bob' into a
+customer by adding a new fixture, but for this example, 'bob' won't be a
+customer. Instead, we'll create a separate person, sally, and make them a
 customer:
 
     person_with_customer => {
@@ -311,7 +311,7 @@ And if you want to load both in your test code:
 
 That will properly load the C<basic_customer> (and, of course, the
 C<person_with_customer>). However, because C<basic_customer> did not have a
-C<next> key, loading the C<basic_customer> first does not load orders:
+C<next> key, loading the C<basic_customer> by itself does not load orders:
 
     $fixtures->load('basic_person'); # doesn't load orders
 
@@ -354,7 +354,7 @@ C<price> column because the the price of the item might change over time, or
 might be on sale. Fetching the price of orders should rely on the price the
 time the order was placed, not on the current item price)
 
-So let's create hammer and screwdriver items, create and order for them and
+So let's create hammer and screwdriver items, create an order for them and
 two order items.
 
     # create an order with two items on it
@@ -408,3 +408,12 @@ definition:
 
 Instead of a hashref for the key, have an array reference with all fixtures
 listed.
+
+=head1 NOTES
+
+As a general rule, when you call C<< $fixtures->load(@fixture_names) >>, any
+fixtures loaded will be cached. If a subsequent fixture attempts to load a
+fixture already loaded, it won't be reloaded.
+
+Calling C<< $fixtures->unload >> (or letting the C<$fixtures> object drop out
+of scope) will clear the cache and allow you to start fresh,
