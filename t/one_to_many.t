@@ -13,7 +13,7 @@ my $schema = Sample::Schema->test_schema;
     isa_ok $fixtures, 'My::Fixtures';
     isa_ok $fixtures, 'DBIx::Class::EasyFixture';
 
-    ok $fixtures->load('order_without_items'),
+    ok $fixtures->load('order_without_items', 'second_order_without_items'),
       'We should be able to load a basic fixture';
 
     ok my $person
@@ -23,6 +23,9 @@ my $schema = Sample::Schema->test_schema;
     is $person->name, 'sally', '... and their name should be correct';
     is $person->birthday->ymd, '1983-02-12', '... as should their birthday';
     ok $person->is_customer, '... and they should be a customer';
+
+    is $person->customer->orders->count, 2,
+        '... and the customer should have two orders';
 }
 
 done_testing;

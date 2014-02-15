@@ -57,6 +57,13 @@ my %definition_for = (
             }
         },
     },
+    second_order_without_items => {
+        new      => 'Order',
+        using    => { order_date => $purchase_date },
+        requires => {
+            basic_customer => 'customer_id',
+        },
+    },
 
     # create an order with two items on it
     item_hammer => {

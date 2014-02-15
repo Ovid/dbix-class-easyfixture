@@ -37,7 +37,7 @@ sub load {
         $self->_set_in_transaction(1);
     }
     foreach my $fixture (@fixtures) {
-        my $definition = $self->get_definition_object($fixture);
+        my $definition = $self->_get_definition_object($fixture);
         if ( my $group = $definition->group ) {
             $self->load(@$group);
         }
@@ -48,7 +48,7 @@ sub load {
     return 1;
 }
 
-sub get_definition_object {
+sub _get_definition_object {
     my ( $self, $fixture ) = @_;
     return Definition->new(
         {   name       => $fixture,
@@ -109,7 +109,7 @@ sub _load_previous_fixtures {
     my ( $self, $requires ) = @_;
 
     foreach my $parent ( keys %$requires ) {
-        $self->_load( $self->get_definition_object($parent) );
+        $self->_load( $self->_get_definition_object($parent) );
     }
 }
 
@@ -118,12 +118,12 @@ sub _load_next_fixtures {
 
     # check for circular definitions!
     foreach my $fixture (@$next) {
-        my $definition = $self->get_definition_object($fixture);
+        my $definition = $self->_get_definition_object($fixture);
         my %data       = %{ $definition->constructor_data };
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
                 my $related_object = $self->_get_result($parent)
-                    || $self->_load($self->get_definition_object($parent))
+                    || $self->_load($self->_get_definition_object($parent))
                     || croak("Panic: related object '$parent' not loaded");
                 my $related_method = $methods->{their};
                 $data{ $methods->{our} } = $related_object->$related_method;
@@ -155,6 +155,10 @@ sub unload {
         #carp("finish() called without load()");
     }
     return 1;
+}
+
+sub all_fixture_names {
+    croak("You must override all_fixture_names() in a subclass");
 }
 
 sub get_definition {
@@ -211,12 +215,89 @@ I wanted an easier way to load fixtures for L<DBIx::Class> code. I looked at
 L<DBIx::Class::Fixtures> and it made a lot of assumptions that, while
 appropriate for some, is not what I wanted (such as the necessity of storing
 fixtures in JSON files), and had a reliance on knowing the values of primary
-keys (and single-column PKs, as far as I can tell). Thus, I wrote this to make
-it easier to define and load L<DBIx::Class> fixtures for tests.
+keys, I wrote this to make it easier to define and load L<DBIx::Class>
+fixtures for tests.
+
+=head1 METHODS
+
+=head2 C<new>
+
+    my $fixtures = Subclass::Of::DBIx::Class::EasyFixture->new({
+        schema => $dbix_class_schema_instance,
+    });
+
+This creates and returns a new instance of your C<DBIx::Class::EasyFixture> subclass.
+
+=head2 C<all_fixture_names>
+
+    my @fixture_names = $fixtures->all_fixture_names;
+
+Must overridden in your subclass. Should return a list (not an array ref!) of
+all fixture names available. This is used internally to generate error
+messages if a fixture attempts to reference a non-existent fixture in its
+C<next> or C<requires> section.
+
+=head2 C<get_definition>
+
+    my $definition = $fixtures->get_definition($fixture_name);
+
+Must be overridden in a subclass. Should return the fixture definition for the
+fixture name passed in. Should return C<undef> if the fixture is not found.
+
+=head2 C<get_result>
+
+    my $dbic_result_object = $fixtures->get_result($fixture_name);
+
+Returns the C<DBIx::Class::Result> object for the given fixture name. Will
+C<carp> if the fixture wasn't loaded (this may become a fatal error in future
+versions).
+
+=head2 C<load>
+
+    $fixtures->load(@list_of_fixture_names);
+
+Attempts to load all fixtures passed to it. If a transaction has not already
+been started, it will be started now. This method may be called multiple
+times.
+
+=head2 C<unload>
+
+    $fixtures->unload;
+
+Rolls back the transaction started with C<load>
+
+=head2 C<fixture_loaded>
+
+    if ( $fixtures->fixture_loaded($fixture_name) ) {
+        ...
+    }
+
+Returns a boolean value indicating whether or not the given fixture was
+loaded.
+
+=head1 TUTORIAL
+
+See L<DBIx::Class::EasyFixture::Tutorial>.
 
 =head1 AUTHOR
 
 Curtis "Ovid" Poe, C<< <ovid at cpan.org> >>
+
+=head1 TODO
+
+=over 4
+
+=item * Prevent circular fixtures
+
+Currently it's very easy to define circular dependencies. We'll worry about
+that later when it becomes more clear how to best handle them.
+
+=item * Better load information
+
+Track what fixtures are requested and what fixtures are loaded (and in which
+order).  This makes for better error reporting.
+
+=back
 
 =head1 BUGS
 
