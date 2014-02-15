@@ -34,8 +34,8 @@ sub BUILD {
     $self->_validate_required_objects;
 }
 
-sub resultset_class  { shift->definition->{class} }
-sub constructor_data { shift->definition->{data} }
+sub resultset_class  { shift->definition->{new} }
+sub constructor_data { shift->definition->{using} }
 sub next             { shift->definition->{next} }
 sub requires         { shift->definition->{requires} }
 
@@ -46,7 +46,7 @@ sub _validate_keys {
     unless ( keys %definition ) {
         croak("Fixture '$name' had no keys");
     }
-    delete @definition{qw/class data next requires/};
+    delete @definition{qw/new using next requires/};
     if ( my @unknown = sort keys %definition ) {
         croak("Fixture '$name' had unknown keys: @unknown");
     }
@@ -59,8 +59,8 @@ sub _validate_class_and_data {
     my $data  = $self->constructor_data;
 
     if ( $class xor $data ) {
-        my $found   = $class ? 'class' : 'data';
-        my $missing = $class ? 'data'  : 'class';
+        my $found   = $class ? 'new'  : 'using';
+        my $missing = $class ? 'using' : 'new';
         my $name    = $self->name;
         croak("Fixture '$name' had a '$found' without a '$missing'");
     }

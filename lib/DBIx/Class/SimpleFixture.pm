@@ -109,8 +109,8 @@ sub _load {
             Definition->new(
                 {   name       => $fixture,
                     definition => {
-                        class => $definition->resultset_class,
-                        data  => \%data,
+                        new   => $definition->resultset_class,
+                        using => \%data,
                     }
                 }
             )

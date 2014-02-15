@@ -15,12 +15,12 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::Most'    => 0,
         'DBD::SQLite'   => 0,
-        'aliased'       => 0,
         'Capture::Tiny' => 0,
     },
     requires => {
-        'DBIx::Class' => 0,
-        'aliased'     => 0,
+        'DBIx::Class'          => 0,
+        'aliased'              => 0,
+        'namespace::autoclean' => 0,
     },
     add_to_cleanup     => ['DBIx-Class-SimpleFixture-*'],
     create_makefile_pl => 'traditional',

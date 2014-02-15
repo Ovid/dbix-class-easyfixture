@@ -17,16 +17,19 @@ my $purchase_date = DateTime->new(
 
 my %definition_for = (
     person_without_customer => {
-        class => 'Person',
-        data  => {
+        new   => 'Person',
+        using => {
             name     => 'Bob',
             email    => 'not@home.com',
             birthday => $birthday,
         },
     },
+
+    # these next three are related (person_with_customer, basic_customer,
+    # order_without_items)
     person_with_customer => {
-        class => 'Person',
-        data  => {
+        new   => 'Person',
+        using => {
             name     => "sally",
             email    => 'person@customer.com',
             birthday => $birthday,
@@ -34,8 +37,8 @@ my %definition_for = (
         next => [qw/basic_customer/],
     },
     basic_customer => {
-        class    => 'Customer',
-        data     => { first_purchase => $purchase_date },
+        new      => 'Customer',
+        using    => { first_purchase => $purchase_date },
         requires => {
             person_with_customer => {
                 our   => 'person_id',
@@ -44,8 +47,20 @@ my %definition_for = (
         },
     },
     order_without_items => {
-        class    => 'Order',
-        data     => { order_date => $purchase_date },
+        new      => 'Order',
+        using    => { order_date => $purchase_date },
+        requires => {
+            basic_customer => {
+                our   => 'customer_id',
+                their => 'customer_id',
+            }
+        },
+    },
+
+    #
+    order_with_items => {
+        new      => 'Order',
+        using    => { order_date => $purchase_date },
         requires => {
             basic_customer => {
                 our   => 'customer_id',

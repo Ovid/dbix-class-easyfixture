@@ -51,19 +51,19 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => "bob",
-                definition => { class => 'Foo' }
+                definition => { new => 'Foo' }
             );
         }
-        qr/Fixture 'bob' had a 'class' without a 'data'/,
-          'Having a definition class without data should fail';
+        qr/Fixture 'bob' had a 'new' without a 'using'/,
+          'Having a definition class without constructor data should fail';
         throws_ok {
             Definition->new(
                 name       => "bob",
-                definition => { data => { name => 'Foo' } }
+                definition => { using => { name => 'Foo' } }
             );
         }
-        qr/Fixture 'bob' had a 'data' without a 'class'/,
-          'Having a definition data without class should fail';
+        qr/Fixture 'bob' had a 'using' without a 'new'/,
+          'Having constructor data without a class should fail';
     };
     subtest 'definition keys' => sub {
         throws_ok {
@@ -84,7 +84,7 @@ subtest 'exceptions' => sub {
           'Having a definition data with unknown keys should fail';
     };
     subtest 'definition next' => sub {
-        my %ignore = ( class => 'Foo', data => { bar => 1 } );
+        my %ignore = ( new => 'Foo', using => { bar => 1 } );
         throws_ok {
             Definition->new(
                 name       => 'this',
@@ -103,7 +103,7 @@ subtest 'exceptions' => sub {
           "Non-string elements in 'next' should fail";
     };
     subtest 'definition requires' => sub {
-        my %ignore = ( class => 'Foo', data => { bar => 1 } );
+        my %ignore = ( new => 'Foo', using => { bar => 1 } );
         throws_ok {
             Definition->new(
                 name       => 'this',
