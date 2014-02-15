@@ -37,12 +37,85 @@ I wanted an easier way to load fixtures for [DBIx::Class](https://metacpan.org/p
 [DBIx::Class::Fixtures](https://metacpan.org/pod/DBIx::Class::Fixtures) and it made a lot of assumptions that, while
 appropriate for some, is not what I wanted (such as the necessity of storing
 fixtures in JSON files), and had a reliance on knowing the values of primary
-keys (and single-column PKs, as far as I can tell). Thus, I wrote this to make
-it easier to define and load [DBIx::Class](https://metacpan.org/pod/DBIx::Class) fixtures for tests.
+keys, I wrote this to make it easier to define and load [DBIx::Class](https://metacpan.org/pod/DBIx::Class)
+fixtures for tests.
+
+# METHODS
+
+## `new`
+
+    my $fixtures = Subclass::Of::DBIx::Class::EasyFixture->new({
+        schema => $dbix_class_schema_instance,
+    });
+
+This creates and returns a new instance of your `DBIx::Class::EasyFixture` subclass.
+
+## `all_fixture_names`
+
+    my @fixture_names = $fixtures->all_fixture_names;
+
+Must overridden in your subclass. Should return a list (not an array ref!) of
+all fixture names available. This is used internally to generate error
+messages if a fixture attempts to reference a non-existent fixture in its
+`next` or `requires` section.
+
+## `get_definition`
+
+    my $definition = $fixtures->get_definition($fixture_name);
+
+Must be overridden in a subclass. Should return the fixture definition for the
+fixture name passed in. Should return `undef` if the fixture is not found.
+
+## `get_result`
+
+    my $dbic_result_object = $fixtures->get_result($fixture_name);
+
+Returns the `DBIx::Class::Result` object for the given fixture name. Will
+`carp` if the fixture wasn't loaded (this may become a fatal error in future
+versions).
+
+## `load`
+
+    $fixtures->load(@list_of_fixture_names);
+
+Attempts to load all fixtures passed to it. If a transaction has not already
+been started, it will be started now. This method may be called multiple
+times.
+
+## `unload`
+
+    $fixtures->unload;
+
+Rolls back the transaction started with `load`
+
+## `fixture_loaded`
+
+    if ( $fixtures->fixture_loaded($fixture_name) ) {
+        ...
+    }
+
+Returns a boolean value indicating whether or not the given fixture was
+loaded.
+
+# TUTORIAL
+
+See [DBIx::Class::EasyFixture::Tutorial](https://metacpan.org/pod/DBIx::Class::EasyFixture::Tutorial).
 
 # AUTHOR
 
 Curtis "Ovid" Poe, `<ovid at cpan.org>`
+
+# TODO
+
+- Prevent circular fixtures
+
+    Currently it's very easy to define circular dependencies. We'll worry about
+    that later when it becomes more clear how to best handle them.
+
+- Better load information
+
+    Track what fixtures are requested and what fixtures are loaded (and in which
+    order).  This makes for better error reporting.
 
 # BUGS
 
