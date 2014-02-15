@@ -13,9 +13,10 @@ my $builder = Module::Build->new(
         'Module::Build' => 0,
     },
     build_requires => {
-        'Test::Most'  => 0,
-        'DBD::SQLite' => 0,
-        'aliased'     => 0,
+        'Test::Most'    => 0,
+        'DBD::SQLite'   => 0,
+        'aliased'       => 0,
+        'Capture::Tiny' => 0,
     },
     requires => {
         'DBIx::Class' => 0,

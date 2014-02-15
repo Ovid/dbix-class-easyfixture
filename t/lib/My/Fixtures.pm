@@ -42,6 +42,16 @@ my %definition_for = (
                 their => 'person_id',
             },
         },
+    },
+    order_without_items => {
+        class    => 'Order',
+        data     => { order_date => $purchase_date },
+        requires => {
+            basic_customer => {
+                our   => 'customer_id',
+                their => 'customer_id',
+            }
+        },
     }
 );
 

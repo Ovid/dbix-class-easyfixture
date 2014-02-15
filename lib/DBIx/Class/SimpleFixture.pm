@@ -23,9 +23,10 @@ has '_cache' => (
     isa     => 'HashRef',
     default => sub { {} },
     handles => {
-        _set_fixture => 'set',
-        _get_fixture => 'get',
-        _clear       => 'clear',
+        _set_fixture   => 'set',
+        _key_result    => 'get',
+        _clear         => 'clear',
+        fixture_loaded => 'exists',
     },
 );
 
@@ -48,12 +49,30 @@ sub get_definition_object {
     );
 }
 
+sub key_result {
+    my ( $self, $fixture ) = @_;
+
+    unless ( $self->fixture_loaded($fixture) ) {
+        carp("Fixture '$fixture' was never loaded");
+        return;
+    }
+    return $self->_key_result($fixture);
+}
+
 sub _get_object {
     my ( $self, $definition ) = @_;
 
     my $name   = $definition->name;
-    my $object = $self->_get_fixture($name);
+    my $object = $self->_key_result($name);
     unless ($object) {
+        my $args = $definition->constructor_data;
+        if ( my $requires = $definition->requires ) {
+            while ( my ( $parent, $methods ) = each %$requires ) {
+                my $other = $self->_key_result($parent);
+                my ( $our, $their ) = @{$methods}{qw/our their/};
+                $args->{$our} = $other->$their;
+            }
+        }
         $object = $self->schema->resultset( $definition->resultset_class )
           ->create( $definition->constructor_data );
         $self->_set_fixture( $name, $object );
@@ -62,7 +81,7 @@ sub _get_object {
 }
 
 sub _load {
-    my ( $self, $definition, @related ) = @_;
+    my ( $self, $definition ) = @_;
 
     # if we're trying to load a child before its parents, we fetch the parents
     # first
@@ -73,8 +92,6 @@ sub _load {
     }
 
     my $object = $self->_get_object($definition);
-    unshift @related => $object;
-
     my $next = $definition->next or return $object;
 
     # check for circular definitions!
@@ -83,7 +100,7 @@ sub _load {
         my %data       = %{ $definition->constructor_data };
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
-                my $related_object = $self->_get_fixture($parent);
+                my $related_object = $self->_key_result($parent);
                 my $related_method = $methods->{their};
                 $data{ $methods->{our} } = $related_object->$related_method;
             }
