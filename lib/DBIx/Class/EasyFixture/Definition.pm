@@ -1,4 +1,4 @@
-package DBIx::Class::SimpleFixture::Definition;
+package DBIx::Class::EasyFixture::Definition;
 use Moose;
 use Moose::Util::TypeConstraints;
 use Carp;

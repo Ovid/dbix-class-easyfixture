@@ -2,7 +2,7 @@ package My::Fixtures;
 use Moose;
 use DateTime;
 use namespace::autoclean;
-extends 'DBIx::Class::SimpleFixture';
+extends 'DBIx::Class::EasyFixture';
 
 my $birthday = DateTime->new(
     year  => 1983,

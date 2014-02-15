@@ -7,7 +7,7 @@ use Test::More;
 plan tests => 1;
 
 BEGIN {
-    use_ok( 'DBIx::Class::SimpleFixture' ) || print "Bail out!\n";
+    use_ok( 'DBIx::Class::EasyFixture' ) || print "Bail out!\n";
 }
 
-diag( "Testing DBIx::Class::SimpleFixture $DBIx::Class::SimpleFixture::VERSION, Perl $], $^X" );
+diag( "Testing DBIx::Class::EasyFixture $DBIx::Class::EasyFixture::VERSION, Perl $], $^X" );

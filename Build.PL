@@ -4,10 +4,10 @@ use warnings FATAL => 'all';
 use Module::Build;
 
 my $builder = Module::Build->new(
-    module_name        => 'DBIx::Class::SimpleFixture',
+    module_name        => 'DBIx::Class::EasyFixture',
     license            => 'Artistic_2_0',
     dist_author        => q{Curtis "Ovid" Poe <ovid@cpan.org>},
-    dist_version_from  => 'lib/DBIx/Class/SimpleFixture.pm',
+    dist_version_from  => 'lib/DBIx/Class/EasyFixture.pm',
     release_status     => 'stable',
     configure_requires => {
         'Module::Build' => 0,
@@ -22,7 +22,7 @@ my $builder = Module::Build->new(
         'aliased'              => 0,
         'namespace::autoclean' => 0,
     },
-    add_to_cleanup     => ['DBIx-Class-SimpleFixture-*'],
+    add_to_cleanup     => ['DBIx-Class-EasyFixture-*'],
     create_makefile_pl => 'traditional',
 );
 

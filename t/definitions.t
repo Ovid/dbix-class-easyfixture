@@ -2,7 +2,7 @@ use Test::Most;
 use lib 't/lib';
 use Sample::Schema;
 use My::Fixtures;
-use aliased 'DBIx::Class::SimpleFixture::Definition';
+use aliased 'DBIx::Class::EasyFixture::Definition';
 use DateTime;
 
 my $birthday = DateTime->new(

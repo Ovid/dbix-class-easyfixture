@@ -11,7 +11,7 @@ subtest 'load multiple fixtures' => sub {
     ok my $fixtures = My::Fixtures->new( schema => $schema ),
       'Creating a fixtures object should succeed';
     isa_ok $fixtures, 'My::Fixtures';
-    isa_ok $fixtures, 'DBIx::Class::SimpleFixture';
+    isa_ok $fixtures, 'DBIx::Class::EasyFixture';
 
     ok $fixtures->load( 'person_without_customer', 'person_with_customer' ),
       'We should be able to load a basic fixture';
@@ -37,7 +37,7 @@ subtest 'load multiple fixtures in a different order' => sub {
     ok my $fixtures = My::Fixtures->new( schema => $schema ),
       'Creating a fixtures object should succeed';
     isa_ok $fixtures, 'My::Fixtures';
-    isa_ok $fixtures, 'DBIx::Class::SimpleFixture';
+    isa_ok $fixtures, 'DBIx::Class::EasyFixture';
 
     ok $fixtures->load( 'person_with_customer', 'person_without_customer' ),
       'We should be able to load a basic fixture';

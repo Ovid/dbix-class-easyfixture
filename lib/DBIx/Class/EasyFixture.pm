@@ -1,9 +1,9 @@
-package DBIx::Class::SimpleFixture;
+package DBIx::Class::EasyFixture;
 
 our $VERSION = '0.01';
 use Moose;
 use Carp;
-use aliased 'DBIx::Class::SimpleFixture::Definition';
+use aliased 'DBIx::Class::EasyFixture::Definition';
 use namespace::autoclean;
 
 has 'schema' => (
@@ -174,7 +174,7 @@ __END__
 
 =head1 NAME
 
-DBIx::Class::SimpleFixture - Easy-to-use DBIx::Class fixtures.
+DBIx::Class::EasyFixture - Easy-to-use DBIx::Class fixtures.
 
 =head1 VERSION
 
@@ -182,9 +182,9 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-    use DBIx::Class::SimpleFixture;
+    use DBIx::Class::EasyFixture;
 
-    my $foo = DBIx::Class::SimpleFixture->new();
+    my $foo = DBIx::Class::EasyFixture->new();
     ...
 
 =head1 AUTHOR
@@ -194,7 +194,7 @@ Curtis "Ovid" Poe, C<< <ovid at cpan.org> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to C<bug-dbix-class-simplefixture at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBIx-Class-SimpleFixture>.  I will be notified, and then you'll
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBIx-Class-EasyFixture>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 
@@ -204,7 +204,7 @@ automatically be notified of progress on your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc DBIx::Class::SimpleFixture
+    perldoc DBIx::Class::EasyFixture
 
 
 You can also look for information at:
@@ -213,19 +213,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-SimpleFixture>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-EasyFixture>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/DBIx-Class-SimpleFixture>
+L<http://annocpan.org/dist/DBIx-Class-EasyFixture>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/DBIx-Class-SimpleFixture>
+L<http://cpanratings.perl.org/d/DBIx-Class-EasyFixture>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/DBIx-Class-SimpleFixture/>
+L<http://search.cpan.org/dist/DBIx-Class-EasyFixture/>
 
 =back
 
@@ -276,4 +276,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1; # End of DBIx::Class::SimpleFixture
+1; # End of DBIx::Class::EasyFixture

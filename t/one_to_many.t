@@ -11,7 +11,7 @@ my $schema = Sample::Schema->test_schema;
     ok my $fixtures = My::Fixtures->new( schema => $schema ),
       'Creating a fixtures object should succeed';
     isa_ok $fixtures, 'My::Fixtures';
-    isa_ok $fixtures, 'DBIx::Class::SimpleFixture';
+    isa_ok $fixtures, 'DBIx::Class::EasyFixture';
 
     ok $fixtures->load('order_without_items'),
       'We should be able to load a basic fixture';
