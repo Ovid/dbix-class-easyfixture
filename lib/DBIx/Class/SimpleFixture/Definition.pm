@@ -1,5 +1,6 @@
 package DBIx::Class::SimpleFixture::Definition;
 use Moose;
+use Moose::Util::TypeConstraints;
 use Carp;
 use Storable 'dclone';
 use namespace::autoclean;
@@ -14,6 +15,16 @@ has 'definition' => (
     is       => 'ro',
     isa      => 'HashRef',
     required => 1,
+);
+
+has 'fixtures' => (
+    traits   => ['Hash'],
+    is       => 'ro',
+    isa      => 'HashRef',
+    required => 1,
+    handles => {
+        fixture_exists => 'exists',
+    },
 );
 
 around 'BUILDARGS' => sub {
@@ -80,6 +91,9 @@ sub _validate_next {
         if ( ref $child ) {
             croak("Fixture '$name' had non-string elements in 'next'");
         }
+        unless ( $self->fixture_exists($child) ) {
+            croak("Fixture '$name' lists a non-existent fixture in 'next': '$child'");
+        }
     }
 }
 
@@ -97,6 +111,9 @@ sub _validate_required_objects {
     # that would break the iterator
     foreach my $parent (keys %$requires) {
         my $methods = $requires->{$parent};
+        unless ( $self->fixture_exists($parent) ) {
+            croak("Fixture '$name' requires a non-existent fixture '$parent'");
+        }
         if ( !ref $methods ) {
             # they used a single key and it matched
             $self->definition->{requires}{$parent} = { our => $methods, their => $methods };

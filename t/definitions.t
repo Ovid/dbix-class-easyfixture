@@ -20,6 +20,7 @@ foreach my $name (@names) {
         Definition->new(
             {   name       => $name,
                 definition => $fixtures->get_definition($name),
+                fixtures   => { map { $_ => 1 } @names },
             }
         );
     }
@@ -28,7 +29,8 @@ foreach my $name (@names) {
 
 my $definition = Definition->new(
     {   name       => 'person_with_customer',
-        definition => $fixtures->get_definition('person_with_customer')
+        definition => $fixtures->get_definition('person_with_customer'),
+        fixtures   => { map { $_ => 1 } @names },
     }
 );
 is $definition->name, 'person_with_customer',
@@ -51,7 +53,8 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => "bob",
-                definition => { new => 'Foo' }
+                definition => { new => 'Foo' },
+                fixtures   => { bob => 1 },
             );
         }
         qr/Fixture 'bob' had a 'new' without a 'using'/,
@@ -59,7 +62,8 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => "bob",
-                definition => { using => { name => 'Foo' } }
+                definition => { using => { name => 'Foo' } },
+                fixtures   => { bob => 1 },
             );
         }
         qr/Fixture 'bob' had a 'using' without a 'new'/,
@@ -69,7 +73,8 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => "bob",
-                definition => {}
+                definition => {},
+                fixtures   => { bob => 1 },
             );
         }
         qr/Fixture 'bob' had no keys/,
@@ -77,7 +82,8 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => "bob",
-                definition => { foo => 1, bar => 2 }
+                definition => { foo => 1, bar => 2 },
+                fixtures   => { bob => 1 },
             );
         }
         qr/Fixture 'bob' had unknown keys: bar foo/,
@@ -88,7 +94,8 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => 'this',
-                definition => { %ignore, next => [undef] }
+                definition => { %ignore, next => [undef] },
+                fixtures   => { this => 1 },
             );
         }
         qr/Fixture 'this' had an undefined element in 'next'/,
@@ -96,7 +103,8 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => 'this',
-                definition => { %ignore, next => [ {} ] }
+                definition => { %ignore, next => [ {} ] },
+                fixtures   => { this => 1 },
             );
         }
         qr/Fixture 'this' had non-string elements in 'next'/,
@@ -107,7 +115,8 @@ subtest 'exceptions' => sub {
         throws_ok {
             Definition->new(
                 name       => 'this',
-                definition => { %ignore, requires => [] }
+                definition => { %ignore, requires => [] },
+                fixtures   => { this => 1 },
             );
         }
         qr/this.Foo.requires does not appear to be a hashref/,
@@ -124,7 +133,8 @@ subtest 'exceptions' => sub {
                             extra => 'asdf',
                         },
                     },
-                }
+                },
+                fixtures => { this => 1, some_other_fixture => 1 },
             );
         }
         qr/'this.Foo.requires' had bad keys: extra/,
@@ -139,7 +149,8 @@ subtest 'exceptions' => sub {
                             their => 'foo_id',
                         },
                     },
-                }
+                },
+                fixtures => { this => 1, some_other_fixture => 1 },
             );
         }
         qr/'this.Foo.requires' requires 'our'/,
@@ -154,11 +165,36 @@ subtest 'exceptions' => sub {
                             our => 'foo_id',
                         },
                     },
-                }
+                },
+                fixtures => { this => 1, some_other_fixture => 1 },
             );
         }
         qr/'this.Foo.requires' requires 'their'/,
           "Missing 'their' in requires should fail";
+        throws_ok {
+            Definition->new(
+                name       => 'this',
+                definition => {
+                    %ignore,
+                    requires => { unknown_fixture => 'unknown_fixture_id' },
+                },
+                fixtures => { this => 1, some_other_fixture => 1 },
+            );
+        }
+        qr/Fixture 'this.Foo.requires' requires a non-existent fixture 'unknown_fixture'/,
+          "An unknown fixture in 'requires' should fail";
+        throws_ok {
+            Definition->new(
+                name       => 'this',
+                definition => {
+                    %ignore,
+                    next => [ 'unknown_fixture' ],
+                },
+                fixtures => { this => 1, some_other_fixture => 1 },
+            );
+        }
+        qr/Fixture 'this' lists a non-existent fixture in 'next': 'unknown_fixture'/,
+          "An unknown fixture in 'next' should fail";
     };
 };
 

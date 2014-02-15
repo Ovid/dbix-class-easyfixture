@@ -45,6 +45,7 @@ sub get_definition_object {
     return Definition->new(
         {   name       => $fixture,
             definition => $self->get_definition($fixture),
+            fixtures   => { map { $_ => 1 } $self->all_fixture_names },
         }
     );
 }
@@ -126,7 +127,8 @@ sub _load_next_fixtures {
                     definition => {
                         new   => $definition->resultset_class,
                         using => \%data,
-                    }
+                    },
+                    fixtures   => { map { $_ => 1 } $self->all_fixture_names },
                 }
             )
         );
