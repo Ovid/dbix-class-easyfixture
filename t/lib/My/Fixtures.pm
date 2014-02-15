@@ -40,17 +40,15 @@ my %definition_for = (
         new      => 'Customer',
         using    => { first_purchase => $purchase_date },
         requires => {
-            #person_with_customer => 'person_id',
-            person_with_customer => {
-                our   => 'person_id',
-                their => 'person_id',
-            },
+            person_with_customer => 'person_id',
         },
     },
     order_without_items => {
         new      => 'Order',
         using    => { order_date => $purchase_date },
         requires => {
+            # this is the same as 
+            # basic_customer => 'customer_id'
             basic_customer => {
                 our   => 'customer_id',
                 their => 'customer_id',
@@ -71,34 +69,24 @@ my %definition_for = (
         new      => 'OrderItem',
         using    => { price => 1.2 },
         requires => {
-            item_hammer => {
-                our   => 'item_id',
-                their => 'item_id',
-            },
-            order_with_items => {
-                our   => 'order_id',
-                their => 'order_id'
-            },
+            item_hammer      => 'item_id',
+            order_with_items => 'order_id',
         },
     },
     order_item_screwdriver => {
         new      => 'OrderItem',
         using    => { price => .7 },
         requires => {
-            item_screwdriver => {
-                our   => 'item_id',
-                their => 'item_id',
-            },
-            order_with_items => {
-                our   => 'order_id',
-                their => 'order_id'
-            },
+            item_screwdriver => 'item_id',
+            order_with_items => 'order_id',
         },
     },
     order_with_items => {
         new      => 'Order',
         using    => { order_date => $purchase_date },
         requires => {
+
+            # showing expanded version because we use this for testing.
             basic_customer => {
                 our   => 'customer_id',
                 their => 'customer_id',

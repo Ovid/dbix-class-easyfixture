@@ -28,6 +28,7 @@ around 'BUILDARGS' => sub {
 
 sub BUILD {
     my $self = shift;
+
     $self->_validate_keys;
     $self->_validate_class_and_data;
     $self->_validate_next;
@@ -91,12 +92,16 @@ sub _validate_required_objects {
     unless ( 'HASH' eq ref $requires ) {
         croak("$name does not appear to be a hashref");
     }
-    while ( my ( $parent, $methods ) = each %$requires ) {
-        #if ( !ref $methods ) {
-        #    # they used a single key and it matched
-        #    $self->definition->{requires}{$parent} = { our => $methods, their => $methods };
-        #    return;
-        #}
+
+    # XXX don't use a while loop here because we might rewrite requires() and
+    # that would break the iterator
+    foreach my $parent (keys %$requires) {
+        my $methods = $requires->{$parent};
+        if ( !ref $methods ) {
+            # they used a single key and it matched
+            $self->definition->{requires}{$parent} = { our => $methods, their => $methods };
+            next;
+        }
         if ( my @bad_keys = grep { !/^(?:our|their)$/ } keys %$methods ) {
             croak("'$name' had bad keys: @bad_keys");
         }
