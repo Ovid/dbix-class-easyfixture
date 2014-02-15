@@ -7,10 +7,7 @@ my $schema = Sample::Schema->test_schema;
 
 {
     # introduce a scope to test DEMOLISH
-    ok my $fixtures = My::Fixtures->new( schema => $schema ),
-      'Creating a fixtures object should succeed';
-    isa_ok $fixtures, 'My::Fixtures';
-    isa_ok $fixtures, 'DBIx::Class::SimpleFixture';
+    my $fixtures = My::Fixtures->new( schema => $schema );
 
     ok $fixtures->load('person_with_customer'),
       'We should be able to load a basic fixture';
@@ -27,10 +24,7 @@ ok !$schema->resultset('Person')->find( { email => 'person@customer.com' } ),
   '... and we should no longer find our fixtures';
 
 {
-    ok my $fixtures = My::Fixtures->new( schema => $schema ),
-      'Creating a fixtures object should succeed';
-    isa_ok $fixtures, 'My::Fixtures';
-    isa_ok $fixtures, 'DBIx::Class::SimpleFixture';
+    my $fixtures = My::Fixtures->new( schema => $schema );
 
     ok $fixtures->load('basic_customer'),
       'We should be able to load fixture with a parent';

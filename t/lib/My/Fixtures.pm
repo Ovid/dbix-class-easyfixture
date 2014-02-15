@@ -40,6 +40,7 @@ my %definition_for = (
         new      => 'Customer',
         using    => { first_purchase => $purchase_date },
         requires => {
+            #person_with_customer => 'person_id',
             person_with_customer => {
                 our   => 'person_id',
                 their => 'person_id',
@@ -57,7 +58,43 @@ my %definition_for = (
         },
     },
 
-    #
+    # create an order with two items on it
+    item_hammer => {
+        new   => 'Item',
+        using => { name => "Hammer", price => 1.2 },
+    },
+    item_screwdriver => {
+        new   => 'Item',
+        using => { name => "Screwdriver", price => 1.4 },
+    },
+    order_item_hammer => {
+        new      => 'OrderItem',
+        using    => { price => 1.2 },
+        requires => {
+            item_hammer => {
+                our   => 'item_id',
+                their => 'item_id',
+            },
+            order_with_items => {
+                our   => 'order_id',
+                their => 'order_id'
+            },
+        },
+    },
+    order_item_screwdriver => {
+        new      => 'OrderItem',
+        using    => { price => .7 },
+        requires => {
+            item_screwdriver => {
+                our   => 'item_id',
+                their => 'item_id',
+            },
+            order_with_items => {
+                our   => 'order_id',
+                their => 'order_id'
+            },
+        },
+    },
     order_with_items => {
         new      => 'Order',
         using    => { order_date => $purchase_date },
@@ -65,9 +102,10 @@ my %definition_for = (
             basic_customer => {
                 our   => 'customer_id',
                 their => 'customer_id',
-            }
+            },
         },
-    }
+        next => [qw/order_item_hammer order_item_screwdriver/],
+    },
 );
 
 sub get_definition {

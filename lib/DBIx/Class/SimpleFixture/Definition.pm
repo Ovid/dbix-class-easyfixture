@@ -91,8 +91,12 @@ sub _validate_required_objects {
     unless ( 'HASH' eq ref $requires ) {
         croak("$name does not appear to be a hashref");
     }
-
     while ( my ( $parent, $methods ) = each %$requires ) {
+        #if ( !ref $methods ) {
+        #    # they used a single key and it matched
+        #    $self->definition->{requires}{$parent} = { our => $methods, their => $methods };
+        #    return;
+        #}
         if ( my @bad_keys = grep { !/^(?:our|their)$/ } keys %$methods ) {
             croak("'$name' had bad keys: @bad_keys");
         }

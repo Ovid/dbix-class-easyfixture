@@ -68,7 +68,8 @@ sub _get_object {
         my $args = $definition->constructor_data;
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
-                my $other = $self->_key_result($parent);
+                my $other = $self->_key_result($parent)
+                    or croak("Panic: required object '$parent' not loaded");
                 my ( $our, $their ) = @{$methods}{qw/our their/};
                 $args->{$our} = $other->$their;
             }
@@ -112,7 +113,9 @@ sub _load_next_fixtures {
         my %data       = %{ $definition->constructor_data };
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
-                my $related_object = $self->_key_result($parent);
+                my $related_object = $self->_key_result($parent)
+                    || $self->_load($self->get_definition_object($parent))
+                    || croak("Panic: related object '$parent' not loaded");
                 my $related_method = $methods->{their};
                 $data{ $methods->{our} } = $related_object->$related_method;
             }

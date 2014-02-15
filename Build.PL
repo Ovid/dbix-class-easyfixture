@@ -15,7 +15,7 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::Most'    => 0,
         'DBD::SQLite'   => 0,
-        'Capture::Tiny' => 0,
+        'Capture::Tiny' => '0.24',
     },
     requires => {
         'DBIx::Class'          => 0,
