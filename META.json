@@ -29,6 +29,7 @@
       "runtime" : {
          "requires" : {
             "DBIx::Class" : "0",
+            "Moose" : "0",
             "aliased" : "0",
             "namespace::autoclean" : "0"
          }

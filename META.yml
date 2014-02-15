@@ -25,6 +25,7 @@ provides:
     file: lib/DBIx/Class/EasyFixture/Tutorial.pm
 requires:
   DBIx::Class: 0
+  Moose: 0
   aliased: 0
   namespace::autoclean: 0
 resources:

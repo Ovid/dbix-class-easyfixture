@@ -8,6 +8,7 @@ WriteMakefile
                    'Capture::Tiny' => '0.24',
                    'DBD::SQLite' => 0,
                    'DBIx::Class' => 0,
+                   'Moose' => 0,
                    'Test::Most' => 0,
                    'aliased' => 0,
                    'namespace::autoclean' => 0
