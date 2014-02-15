@@ -24,6 +24,10 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup     => ['DBIx-Class-EasyFixture-*'],
     create_makefile_pl => 'traditional',
+    meta_merge         => {
+        resources =>
+          { repository => 'https://github.com/Ovid/dbix-class-easyfixture' }
+    },
 );
 
 $builder->create_build_script();
