@@ -10,7 +10,7 @@ subtest 'loading order first' => sub {
     ok $fixtures->load('order_with_items'),
       'We should be able to load an order with items';
 
-    ok my $order = $fixtures->key_result('order_with_items'),
+    ok my $order = $fixtures->get_result('order_with_items'),
       'We should be able to fetch our order';
     is $order->order_items->count, 2,
       '... and it should have two order items on it';
@@ -21,7 +21,7 @@ subtest 'loading order item first' => sub {
     ok $fixtures->load('order_item_hammer'),
       'We should be able to load an order with items';
 
-    ok my $order = $fixtures->key_result('order_with_items'),
+    ok my $order = $fixtures->get_result('order_with_items'),
       'We should be able to fetch our order';
     is $order->order_items->count, 2,
       '... and it should have two order items on it';

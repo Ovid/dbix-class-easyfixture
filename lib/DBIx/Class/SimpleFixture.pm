@@ -24,7 +24,7 @@ has '_cache' => (
     default => sub { {} },
     handles => {
         _set_fixture   => 'set',
-        _key_result    => 'get',
+        _get_result    => 'get',
         _clear         => 'clear',
         fixture_loaded => 'exists',
     },
@@ -50,26 +50,26 @@ sub get_definition_object {
     );
 }
 
-sub key_result {
+sub get_result {
     my ( $self, $fixture ) = @_;
 
     unless ( $self->fixture_loaded($fixture) ) {
         carp("Fixture '$fixture' was never loaded");
         return;
     }
-    return $self->_key_result($fixture);
+    return $self->_get_result($fixture);
 }
 
 sub _get_object {
     my ( $self, $definition ) = @_;
 
     my $name   = $definition->name;
-    my $object = $self->_key_result($name);
+    my $object = $self->_get_result($name);
     unless ($object) {
         my $args = $definition->constructor_data;
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
-                my $other = $self->_key_result($parent)
+                my $other = $self->_get_result($parent)
                     or croak("Panic: required object '$parent' not loaded");
                 my ( $our, $their ) = @{$methods}{qw/our their/};
                 $args->{$our} = $other->$their;
@@ -114,7 +114,7 @@ sub _load_next_fixtures {
         my %data       = %{ $definition->constructor_data };
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
-                my $related_object = $self->_key_result($parent)
+                my $related_object = $self->_get_result($parent)
                     || $self->_load($self->get_definition_object($parent))
                     || croak("Panic: related object '$parent' not loaded");
                 my $related_method = $methods->{their};

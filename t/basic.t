@@ -31,7 +31,7 @@ ok !$schema->resultset('Person')->find( { email => 'not@home.com' } ),
 
 subtest 'fetching key result' => sub {
     my ( undef, $stderr, @results ) = capture {
-        $fixtures->key_result('person_without_customer');
+        $fixtures->get_result('person_without_customer');
     };
     like $stderr,
       qr/Fixture 'person_without_customer' was never loaded/,
@@ -41,8 +41,8 @@ subtest 'fetching key result' => sub {
     ok $fixtures->load('person_without_customer'),
       'We should be able to load a basic fixture';
 
-    ok my $person = $fixtures->key_result('person_without_customer'),
-      'key_result() should return the primary result object for a fixture';
+    ok my $person = $fixtures->get_result('person_without_customer'),
+      'get_result() should return the primary result object for a fixture';
     is $person->name, 'Bob', '... and their name should be correct';
     is $person->birthday->ymd, '1983-02-12', '... as should their birthday';
     ok !$person->is_customer, '... and they should not be a customer';
