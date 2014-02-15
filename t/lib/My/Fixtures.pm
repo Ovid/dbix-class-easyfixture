@@ -16,6 +16,7 @@ my $purchase_date = DateTime->new(
 );
 
 my %definition_for = (
+    all_people => [qw/person_without_customer person_with_customer/],
     person_without_customer => {
         new   => 'Person',
         using => {
@@ -47,7 +48,8 @@ my %definition_for = (
         new      => 'Order',
         using    => { order_date => $purchase_date },
         requires => {
-            # this is the same as 
+
+            # this is the same as
             # basic_customer => 'customer_id'
             basic_customer => {
                 our   => 'customer_id',

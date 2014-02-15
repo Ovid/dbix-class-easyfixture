@@ -27,6 +27,11 @@ has 'fixtures' => (
     },
 );
 
+has 'group' => (
+    is  => 'ro',
+    isa => 'ArrayRef[Str]',
+);
+
 around 'BUILDARGS' => sub {
     my $orig = shift;
     my $self = shift;
@@ -34,16 +39,22 @@ around 'BUILDARGS' => sub {
     if ( 'HASH' ne ref $_[0] ) {
         $args = {@_};
     }
+    if ( 'ARRAY' eq ref $args->{definition} ) {
+        $args->{group}      = $args->{definition};
+        $args->{definition} = {};
+    }
     $self->$orig( dclone($args) );
 };
 
 sub BUILD {
     my $self = shift;
 
-    $self->_validate_keys;
-    $self->_validate_class_and_data;
-    $self->_validate_next;
-    $self->_validate_required_objects;
+    unless ( $self->group ) {
+        $self->_validate_keys;
+        $self->_validate_class_and_data;
+        $self->_validate_next;
+        $self->_validate_required_objects;
+    }
 }
 
 sub resultset_class  { shift->definition->{new} }
@@ -58,7 +69,7 @@ sub _validate_keys {
     unless ( keys %definition ) {
         croak("Fixture '$name' had no keys");
     }
-    delete @definition{qw/new using next requires/};
+    delete @definition{qw/group new using next requires/};
     if ( my @unknown = sort keys %definition ) {
         croak("Fixture '$name' had unknown keys: @unknown");
     }

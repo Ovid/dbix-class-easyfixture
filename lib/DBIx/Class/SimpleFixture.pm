@@ -36,7 +36,15 @@ sub load {
         $self->schema->txn_begin;
         $self->_set_in_transaction(1);
     }
-    $self->_load( $self->get_definition_object($_) ) foreach @fixtures;
+    foreach my $fixture (@fixtures) {
+        my $definition = $self->get_definition_object($fixture);
+        if ( my $group = $definition->group ) {
+            $self->load(@$group);
+        }
+        else {
+            $self->_load($definition);
+        }
+    }
     return 1;
 }
 

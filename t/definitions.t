@@ -24,7 +24,7 @@ foreach my $name (@names) {
             }
         );
     }
-    'Definitions should be valid for all defined fixtures';
+    "Definition should be valid for '$name'";
 }
 
 my $definition = Definition->new(
