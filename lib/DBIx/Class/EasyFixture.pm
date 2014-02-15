@@ -182,10 +182,37 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-    use DBIx::Class::EasyFixture;
+    package My::Fixtures;
+    use Moose;
+    extends 'DBIx::Class::EasyFixture';
 
-    my $foo = DBIx::Class::EasyFixture->new();
-    ...
+    sub get_fixture       { ... }
+    sub all_fixture_names { ... }
+
+And in your test code:
+
+    my $fixtures = My::Fixtures->new( { schema => $schema } );
+    $fixtures->load('some_fixture');
+
+    # run your tests
+
+    $fixtures->unload;
+
+Note that C<unload> will be called for you if your fixture object falls out of
+scope.
+
+=head1 DESCRIPTION
+
+This is C<ALPHA> code. Documentation is on its way, including a tutorial. For
+now, you'll have to read the tests. You can read F<t/lib/My/Fixtures.pm> to
+see how fixtures are defined.
+
+I wanted an easier way to load fixtures for L<DBIx::Class> code. I looked at
+L<DBIx::Class::Fixtures> and it made a lot of assumptions that, while
+appropriate for some, is not what I wanted (such as the necessity of storing
+fixtures in JSON files), and had a reliance on knowing the values of primary
+keys (and single-column PKs, as far as I can tell). Thus, I wrote this to make
+it easier to define and load L<DBIx::Class> fixtures for tests.
 
 =head1 AUTHOR
 
@@ -193,19 +220,17 @@ Curtis "Ovid" Poe, C<< <ovid at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-dbix-class-simplefixture at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBIx-Class-EasyFixture>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
+Please report any bugs or feature requests to C<bug-dbix-class-simplefixture
+at rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBIx-Class-EasyFixture>.  I
+will be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
     perldoc DBIx::Class::EasyFixture
-
 
 You can also look for information at:
 
@@ -229,9 +254,11 @@ L<http://search.cpan.org/dist/DBIx-Class-EasyFixture/>
 
 =back
 
-
 =head1 ACKNOWLEDGEMENTS
 
+Many thanks to L<http://www.allaroundtheworld.fr/> for sponsoring this work.
+
+See also L<http://search.cpan.org/dist/DBIx-Class-Fixtures/>.
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -273,7 +300,6 @@ CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 =cut
 
-1; # End of DBIx::Class::EasyFixture
+1;
