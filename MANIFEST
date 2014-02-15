@@ -26,3 +26,6 @@ t/one_to_one.t
 xt/manifest.t
 xt/pod-coverage.t
 xt/pod.t
+Makefile.PL
+META.yml
+META.json

@@ -1,0 +1,59 @@
+{
+   "abstract" : "Easy-to-use DBIx::Class fixtures.",
+   "author" : [
+      "Curtis \"Ovid\" Poe <ovid@cpan.org>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.4005, CPAN::Meta::Converter version 2.133380",
+   "license" : [
+      "artistic_2"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "DBIx-Class-EasyFixture",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Capture::Tiny" : "0.24",
+            "DBD::SQLite" : "0",
+            "Test::Most" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "DBIx::Class" : "0",
+            "aliased" : "0",
+            "namespace::autoclean" : "0"
+         }
+      }
+   },
+   "provides" : {
+      "DBIx::Class::EasyFixture" : {
+         "file" : "lib/DBIx/Class/EasyFixture.pm",
+         "version" : "0.01"
+      },
+      "DBIx::Class::EasyFixture::Definition" : {
+         "file" : "lib/DBIx/Class/EasyFixture/Definition.pm"
+      },
+      "DBIx::Class::EasyFixture::Tutorial" : {
+         "file" : "lib/DBIx/Class/EasyFixture/Tutorial.pm"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://www.perlfoundation.org/artistic_license_2_0"
+      ],
+      "repository" : {
+         "url" : "https://github.com/Ovid/dbix-class-easyfixture"
+      }
+   },
+   "version" : "0.01"
+}

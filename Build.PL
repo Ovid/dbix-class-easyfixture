@@ -21,6 +21,7 @@ my $builder = Module::Build->new(
         'DBIx::Class'          => 0,
         'aliased'              => 0,
         'namespace::autoclean' => 0,
+        'Moose'                => 0,
     },
     add_to_cleanup     => ['DBIx-Class-EasyFixture-*'],
     create_makefile_pl => 'traditional',
