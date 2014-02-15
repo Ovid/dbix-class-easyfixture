@@ -83,16 +83,28 @@ sub _get_object {
 sub _load {
     my ( $self, $definition ) = @_;
 
-    # if we're trying to load a child before its parents, we fetch the parents
-    # first
     if ( my $requires = $definition->requires ) {
-        foreach my $parent ( keys %$requires ) {
-            $self->_load( $self->get_definition_object($parent) );
-        }
+        $self->_load_previous_fixtures($requires);
     }
 
     my $object = $self->_get_object($definition);
-    my $next = $definition->next or return $object;
+
+    if ( my $next = $definition->next ) {
+        $self->_load_next_fixtures($next);
+    }
+    return $object;
+}
+
+sub _load_previous_fixtures {
+    my ( $self, $requires ) = @_;
+
+    foreach my $parent ( keys %$requires ) {
+        $self->_load( $self->get_definition_object($parent) );
+    }
+}
+
+sub _load_next_fixtures {
+    my ( $self, $next ) = @_;
 
     # check for circular definitions!
     foreach my $fixture (@$next) {
@@ -116,7 +128,6 @@ sub _load {
             )
         );
     }
-    return $object;
 }
 
 sub unload {
