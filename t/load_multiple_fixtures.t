@@ -6,12 +6,7 @@ use My::Fixtures;
 my $schema = Sample::Schema->test_schema;
 
 subtest 'load multiple fixtures' => sub {
-
-    # introduce a scope to test DEMOLISH
-    ok my $fixtures = My::Fixtures->new( schema => $schema ),
-      'Creating a fixtures object should succeed';
-    isa_ok $fixtures, 'My::Fixtures';
-    isa_ok $fixtures, 'DBIx::Class::EasyFixture';
+    my $fixtures = My::Fixtures->new( schema => $schema );
 
     ok $fixtures->load( 'person_without_customer', 'person_with_customer' ),
       'We should be able to load a basic fixture';
@@ -32,12 +27,7 @@ subtest 'load multiple fixtures' => sub {
 };
 
 subtest 'load multiple fixtures in a different order' => sub {
-
-    # introduce a scope to test DEMOLISH
-    ok my $fixtures = My::Fixtures->new( schema => $schema ),
-      'Creating a fixtures object should succeed';
-    isa_ok $fixtures, 'My::Fixtures';
-    isa_ok $fixtures, 'DBIx::Class::EasyFixture';
+    my $fixtures = My::Fixtures->new( schema => $schema );
 
     ok $fixtures->load( 'person_with_customer', 'person_without_customer' ),
       'We should be able to load a basic fixture';
@@ -55,6 +45,17 @@ subtest 'load multiple fixtures in a different order' => sub {
       'We should be able to load more than one fixture';
     ok !$person_without_customer->is_customer,
       '... and have them work as expected';
+};
+
+subtest 'load all fixtures' => sub {
+    my $fixtures = My::Fixtures->new( schema => $schema );
+
+    # note: just because this works in this test doesn't mean it will work for
+    # your code. It's possible to create all sorts of scenarios where your
+    # fixtures might have circular dependences, or maybe multiple fixtures
+    # will try to violate a unique constraint.
+    lives_ok { $fixtures->load( $fixtures->all_fixture_names ) }
+    'Loading all validly constructed fixtures should suceed';
 };
 
 done_testing;

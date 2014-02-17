@@ -30,6 +30,14 @@ has '_cache' => (
     },
 );
 
+sub BUILD {
+    my $self = shift;
+
+    # Creating a definition object validates them, so this tells us at
+    # construction time if all fixtures are valid.
+    $self->_get_definition_object($_) foreach $self->all_fixture_names;
+}
+
 sub load {
     my ( $self, @fixtures ) = @_;
     unless ( $self->_in_transaction ) {
@@ -226,7 +234,10 @@ fixtures for tests.
         schema => $dbix_class_schema_instance,
     });
 
-This creates and returns a new instance of your C<DBIx::Class::EasyFixture> subclass.
+This creates and returns a new instance of your C<DBIx::Class::EasyFixture>
+subclass. All fixture definitions are validated at this time and the
+constructor will C<croak()> with a useful error message upon validation
+failure.
 
 =head2 C<all_fixture_names>
 
