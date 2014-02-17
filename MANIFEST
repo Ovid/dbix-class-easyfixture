@@ -2,10 +2,24 @@ Build.PL
 Changes
 data/orders.db
 data/orders.sql
+inc/Module/AutoInstall.pm
+inc/Module/Install.pm
+inc/Module/Install/AutoInstall.pm
+inc/Module/Install/Base.pm
+inc/Module/Install/Can.pm
+inc/Module/Install/Fetch.pm
+inc/Module/Install/Include.pm
+inc/Module/Install/Makefile.pm
+inc/Module/Install/Metadata.pm
+inc/Module/Install/Win32.pm
+inc/Module/Install/WriteAll.pm
 lib/DBIx/Class/EasyFixture.pm
 lib/DBIx/Class/EasyFixture/Definition.pm
 lib/DBIx/Class/EasyFixture/Tutorial.pm
+Makefile.PL
 MANIFEST			This list of files
+META.json
+META.yml
 README
 README.md
 t/00-load.t
@@ -26,6 +40,3 @@ t/one_to_one.t
 xt/manifest.t
 xt/pod-coverage.t
 xt/pod.t
-Makefile.PL
-META.yml
-META.json
