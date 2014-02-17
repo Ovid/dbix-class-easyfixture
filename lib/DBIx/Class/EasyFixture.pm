@@ -1,6 +1,6 @@
 package DBIx::Class::EasyFixture;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 use Moose;
 use Carp;
 use aliased 'DBIx::Class::EasyFixture::Definition';
@@ -314,7 +314,7 @@ order).  This makes for better error reporting.
 
 Please report any bugs or feature requests to C<bug-dbix-class-simplefixture
 at rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBIx-Class-EasyFixture>.  I
+L<https://github.com/Ovid/dbix-class-easyfixture/issues>.  I
 will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
 
@@ -323,6 +323,7 @@ your bug as I make changes.
 You can find documentation for this module with the perldoc command.
 
     perldoc DBIx::Class::EasyFixture
+    perldoc DBIx::Class::EasyFixture::Tutorial
 
 You can also look for information at:
 
@@ -330,7 +331,7 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-EasyFixture>
+L<https://github.com/Ovid/dbix-class-easyfixture/issues>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 

@@ -5,6 +5,8 @@ use Carp;
 use Storable 'dclone';
 use namespace::autoclean;
 
+our $VERSION = '0.02';
+
 has 'name' => (
     is       => 'ro',
     isa      => 'Str',
