@@ -48,7 +48,10 @@ fixtures for tests.
         schema => $dbix_class_schema_instance,
     });
 
-This creates and returns a new instance of your `DBIx::Class::EasyFixture` subclass.
+This creates and returns a new instance of your `DBIx::Class::EasyFixture`
+subclass. All fixture definitions are validated at this time and the
+constructor will `croak()` with a useful error message upon validation
+failure.
 
 ## `all_fixture_names`
 
@@ -121,7 +124,7 @@ Curtis "Ovid" Poe, `<ovid at cpan.org>`
 
 Please report any bugs or feature requests to `bug-dbix-class-simplefixture
 at rt.cpan.org`, or through the web interface at
-[http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBIx-Class-EasyFixture](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBIx-Class-EasyFixture).  I
+[https://github.com/Ovid/dbix-class-easyfixture/issues](https://github.com/Ovid/dbix-class-easyfixture/issues).  I
 will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
 
@@ -130,12 +133,13 @@ your bug as I make changes.
 You can find documentation for this module with the perldoc command.
 
     perldoc DBIx::Class::EasyFixture
+    perldoc DBIx::Class::EasyFixture::Tutorial
 
 You can also look for information at:
 
 - RT: CPAN's request tracker (report bugs here)
 
-    [http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-EasyFixture](http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-EasyFixture)
+    [https://github.com/Ovid/dbix-class-easyfixture/issues](https://github.com/Ovid/dbix-class-easyfixture/issues)
 
 - AnnoCPAN: Annotated CPAN documentation
 
@@ -163,7 +167,7 @@ This program is free software; you can redistribute it and/or modify it
 under the terms of the the Artistic License (2.0). You may obtain a
 copy of the full license at:
 
-[http://www.perlfoundation.org/artistic_license_2_0](http://www.perlfoundation.org/artistic_license_2_0)
+[http://www.perlfoundation.org/artistic\_license\_2\_0](http://www.perlfoundation.org/artistic_license_2_0)
 
 Any use, modification, and distribution of the Standard or Modified
 Versions is governed by this Artistic License. By using, modifying or
