@@ -359,15 +359,37 @@ Assuming we already have a C<Person> fixture defined and it's named
 C<some_person> and its ID is named C<id>, we can do this:
 
     {
-        new   => 'Customer',
-        using => {
-            first_purchase => $datetime_object,
-        },
+        new      => 'Customer',
+        using    => { first_purchase => $datetime_object },
         requires => {
             some_person => {
                 our   => 'person_id',
                 their => 'id',
             },
+        },
+    }
+
+The C<our> key refers to the attribute for the C<Customer> fixture and the
+C<their> key refers to the attribute of the C<Person> fixture. As a
+convenience, if both attributes have the same name, you can omit that hashref
+and just use the attribute name:
+
+    {
+        new      => 'Customer',
+        using    => { first_purchase => $datetime_object },
+        requires => {
+            some_person => 'person_id',
+        },
+    }
+
+And multiple C<requires> can be specified:
+
+    {
+        new      => 'Customer',
+        using    => { first_purchase => $datetime_object },
+        requires => {
+            some_person     => 'person_id',
+            primary_contact => 'contact_id',
         },
     }
 
