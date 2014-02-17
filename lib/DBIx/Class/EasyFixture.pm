@@ -298,19 +298,19 @@ The C<get_definition($fixture_name)> method must always return a fixture
 definition. The definition must be either a fixture group or a fixture
 builder.
 
-A fixture group is an array reference containin a list of fixture names. For
+A fixture group is an array reference containing a list of fixture names. For
 example, C<< $fixture->get_definition('all_people') might return:
 
-    [qw/ person_1 person_2 person_2/]
+    [qw/ person_1 person_2 person_2 /]
 
-A fixture builder must return a hashreference with the one or more of the
+A fixture builder must return a hash reference with the one or more of the
 following keys:
 
 =over 4
 
 =item * C<new> (required)
 
-A C<DBIx::Class> resultsource name.
+A C<DBIx::Class> result source name.
 
     {
         new   => 'Person',
@@ -319,6 +319,11 @@ A C<DBIx::Class> resultsource name.
             email => 'bob@example.com',
         }
     }
+
+Internally, the above will do something similar to this:
+
+    $schema->resultset($definition->{name})
+           ->create($definition->{using});
 
 =item * C<using> (required)
 
@@ -335,9 +340,18 @@ result source referred to by the C<new> key.
 
 =item * C<next> (optional)
 
-If present, this must point to an array referene of fixture names (in other
+If present, this must point to an array reference of fixture names (in other
 words, a fixture group). These fixtures will then be built I<after> the
 current fixture is built.
+
+    {
+        new   => 'Person',
+        using => {
+            name  => 'Bob',
+            email => 'bob@example.com',
+        },
+        next => [@list_of_fixture_names],
+    }
 
 =item * C<requires> (optional)
 
@@ -392,6 +406,14 @@ And multiple C<requires> can be specified:
             primary_contact => 'contact_id',
         },
     }
+
+The above will construct the fixture like this:
+
+    $schema->resultset('Customer')->create({
+        first_purchase  => $datetime_object,
+        person_id       => $person->person_id,
+        primary_contact => $contact->contact_id,
+    });
 
 =back
 

@@ -111,17 +111,17 @@ The `get_definition($fixture_name)` method must always return a fixture
 definition. The definition must be either a fixture group or a fixture
 builder.
 
-A fixture group is an array reference containin a list of fixture names. For
+A fixture group is an array reference containing a list of fixture names. For
 example, `$fixture->get_definition('all_people') might return:`
 
-    [qw/ person_1 person_2 person_2/]
+    [qw/ person_1 person_2 person_2 /]
 
-A fixture builder must return a hashreference with the one or more of the
+A fixture builder must return a hash reference with the one or more of the
 following keys:
 
 - `new` (required)
 
-    A `DBIx::Class` resultsource name.
+    A `DBIx::Class` result source name.
 
         {
             new   => 'Person',
@@ -130,6 +130,11 @@ following keys:
                 email => 'bob@example.com',
             }
         }
+
+    Internally, the above will do something similar to this:
+
+        $schema->resultset($definition->{name})
+               ->create($definition->{using});
 
 - `using` (required)
 
@@ -146,9 +151,18 @@ following keys:
 
 - `next` (optional)
 
-    If present, this must point to an array referene of fixture names (in other
+    If present, this must point to an array reference of fixture names (in other
     words, a fixture group). These fixtures will then be built _after_ the
     current fixture is built.
+
+        {
+            new   => 'Person',
+            using => {
+                name  => 'Bob',
+                email => 'bob@example.com',
+            },
+            next => [@list_of_fixture_names],
+        }
 
 - `requires` (optional)
 
@@ -203,6 +217,14 @@ following keys:
                 primary_contact => 'contact_id',
             },
         }
+
+    The above will construct the fixture like this:
+
+        $schema->resultset('Customer')->create({
+            first_purchase  => $datetime_object,
+            person_id       => $person->person_id,
+            primary_contact => $contact->contact_id,
+        });
 
 When writing a fixture builder, remember that `requires` are always built
 before the current fixture and `next` is also built after the current
