@@ -299,7 +299,7 @@ definition. The definition must be either a fixture group or a fixture
 builder.
 
 A fixture group is an array reference containing a list of fixture names. For
-example, C<< $fixture->get_definition('all_people') might return:
+example, C<< $fixture->get_definition('all_people') >> might return:
 
     [qw/ person_1 person_2 person_2 /]
 
