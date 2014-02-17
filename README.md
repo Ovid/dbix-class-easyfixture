@@ -4,7 +4,7 @@ DBIx::Class::EasyFixture - Easy-to-use DBIx::Class fixtures.
 
 # VERSION
 
-Version 0.01
+Version 0.03
 
 # SYNOPSIS
 
@@ -28,6 +28,9 @@ Note that `unload` will be called for you if your fixture object falls out of
 scope.
 
 # DESCRIPTION
+
+The latest version of this is always at
+[https://github.com/Ovid/dbix-class-easyfixture](https://github.com/Ovid/dbix-class-easyfixture).
 
 This is `ALPHA` code. Documentation is on its way, including a tutorial. For
 now, you'll have to read the tests. You can read `t/lib/My/Fixtures.pm` to
@@ -99,6 +102,111 @@ Rolls back the transaction started with `load`
 
 Returns a boolean value indicating whether or not the given fixture was
 loaded.
+
+# FIXTURES
+
+If the following is unclear, see [DBIx::Class::EasyFixture::Tutorial](https://metacpan.org/pod/DBIx::Class::EasyFixture::Tutorial).
+
+The `get_definition($fixture_name)` method must always return a fixture
+definition. The definition must be either a fixture group or a fixture
+builder.
+
+A fixture group is an array reference containin a list of fixture names. For
+example, `$fixture->get_definition('all_people') might return:`
+
+    [qw/ person_1 person_2 person_2/]
+
+A fixture builder must return a hashreference with the one or more of the
+following keys:
+
+- `new` (required)
+
+    A `DBIx::Class` resultsource name.
+
+        {
+            new   => 'Person',
+            using => {
+                name  => 'Bob',
+                email => 'bob@example.com',
+            }
+        }
+
+- `using` (required)
+
+    A hashref of key/value pairs that will be used to create the `DBIx::Class`
+    result source referred to by the `new` key.
+
+        {
+            new   => 'Person',
+            using => {
+                name  => 'Bob',
+                email => 'bob@example.com',
+            }
+        }
+
+- `next` (optional)
+
+    If present, this must point to an array referene of fixture names (in other
+    words, a fixture group). These fixtures will then be built _after_ the
+    current fixture is built.
+
+- `requires` (optional)
+
+    Must point to either a scalar of an attribute name or a hash mapping of
+    attribute names.
+
+    Many fixtures require data from another fixture. For example, a customer might
+    require a person object being built and the following won't work:
+
+        {
+            new   => 'Customer',
+            using => {
+                first_purchase => $datetime_object,
+                person_id      => 'some_person.person_id',
+            }
+        }
+
+    Assuming we already have a `Person` fixture defined and it's named
+    `some_person` and its ID is named `id`, we can do this:
+
+        {
+            new      => 'Customer',
+            using    => { first_purchase => $datetime_object },
+            requires => {
+                some_person => {
+                    our   => 'person_id',
+                    their => 'id',
+                },
+            },
+        }
+
+    The `our` key refers to the attribute for the `Customer` fixture and the
+    `their` key refers to the attribute of the `Person` fixture. As a
+    convenience, if both attributes have the same name, you can omit that hashref
+    and just use the attribute name:
+
+        {
+            new      => 'Customer',
+            using    => { first_purchase => $datetime_object },
+            requires => {
+                some_person => 'person_id',
+            },
+        }
+
+    And multiple `requires` can be specified:
+
+        {
+            new      => 'Customer',
+            using    => { first_purchase => $datetime_object },
+            requires => {
+                some_person     => 'person_id',
+                primary_contact => 'contact_id',
+            },
+        }
+
+When writing a fixture builder, remember that `requires` are always built
+before the current fixture and `next` is also built after the current
+fixture.
 
 # TUTORIAL
 
@@ -198,3 +306,11 @@ YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
 CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# POD ERRORS
+
+Hey! __The above document had some coding errors, which are explained below:__
+
+- Around line 301:
+
+    Unterminated C< ... > sequence
