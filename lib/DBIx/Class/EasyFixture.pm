@@ -191,7 +191,7 @@ DBIx::Class::EasyFixture - Easy-to-use DBIx::Class fixtures.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
@@ -215,6 +215,9 @@ Note that C<unload> will be called for you if your fixture object falls out of
 scope.
 
 =head1 DESCRIPTION
+
+The latest version of this is always at
+L<https://github.com/Ovid/dbix-class-easyfixture>.
 
 This is C<ALPHA> code. Documentation is on its way, including a tutorial. For
 now, you'll have to read the tests. You can read F<t/lib/My/Fixtures.pm> to
@@ -286,6 +289,93 @@ Rolls back the transaction started with C<load>
 
 Returns a boolean value indicating whether or not the given fixture was
 loaded.
+
+=head1 FIXTURES
+
+If the following is unclear, see L<DBIx::Class::EasyFixture::Tutorial>.
+
+The C<get_definition($fixture_name)> method must always return a fixture
+definition. The definition must be either a fixture group or a fixture
+builder.
+
+A fixture group is an array reference containin a list of fixture names. For
+example, C<< $fixture->get_definition('all_people') might return:
+
+    [qw/ person_1 person_2 person_2/]
+
+A fixture builder must return a hashreference with the one or more of the
+following keys:
+
+=over 4
+
+=item * C<new> (required)
+
+A C<DBIx::Class> resultsource name.
+
+    {
+        new   => 'Person',
+        using => {
+            name  => 'Bob',
+            email => 'bob@example.com',
+        }
+    }
+
+=item * C<using> (required)
+
+A hashref of key/value pairs that will be used to create the C<DBIx::Class>
+result source referred to by the C<new> key.
+
+    {
+        new   => 'Person',
+        using => {
+            name  => 'Bob',
+            email => 'bob@example.com',
+        }
+    }
+
+=item * C<next> (optional)
+
+If present, this must point to an array referene of fixture names (in other
+words, a fixture group). These fixtures will then be built I<after> the
+current fixture is built.
+
+=item * C<requires> (optional)
+
+Must point to either a scalar of an attribute name or a hash mapping of
+attribute names.
+
+Many fixtures require data from another fixture. For example, a customer might
+require a person object being built and the following won't work:
+
+    {
+        new   => 'Customer',
+        using => {
+            first_purchase => $datetime_object,
+            person_id      => 'some_person.person_id',
+        }
+    }
+
+Assuming we already have a C<Person> fixture defined and it's named
+C<some_person> and its ID is named C<id>, we can do this:
+
+    {
+        new   => 'Customer',
+        using => {
+            first_purchase => $datetime_object,
+        },
+        requires => {
+            some_person => {
+                our   => 'person_id',
+                their => 'id',
+            },
+        },
+    }
+
+=back
+
+When writing a fixture builder, remember that C<requires> are always built
+before the current fixture and C<next> is also built after the current
+fixture.
 
 =head1 TUTORIAL
 
