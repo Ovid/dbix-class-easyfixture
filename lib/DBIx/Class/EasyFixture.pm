@@ -1,10 +1,11 @@
 package DBIx::Class::EasyFixture;
 
-our $VERSION = '0.02';
+use 5.008003;
 use Moose;
 use Carp;
 use aliased 'DBIx::Class::EasyFixture::Definition';
 use namespace::autoclean;
+our $VERSION = '0.02';
 
 has 'schema' => (
     is       => 'ro',

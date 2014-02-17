@@ -3,12 +3,12 @@ use strict;
 use warnings FATAL => 'all';
 use inc::Module::Install;
 
-name 'DBIx::Class::EasyFixture';
+name 'DBIx-Class-EasyFixture';
 all_from 'lib/DBIx/Class/EasyFixture.pm';
 author q{Curtis "Ovid" Poe <ovid@cpan.org>};
 license 'artistic2';
 
-perl_version 5.006;
+perl_version 5.008003;
 
 tests_recursive('t');
 
