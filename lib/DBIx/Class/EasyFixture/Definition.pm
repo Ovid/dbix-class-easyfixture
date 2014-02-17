@@ -5,7 +5,7 @@ use Carp;
 use Storable 'dclone';
 use namespace::autoclean;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 has 'name' => (
     is       => 'ro',

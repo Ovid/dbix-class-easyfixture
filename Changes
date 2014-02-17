@@ -1,5 +1,8 @@
 Revision history for DBIx-Class-EasyFixture
 
+0.03
+        - Update main docs to give short description of fixtures.
+
 0.02    2014-02-17
 		- Switch to Module::Install for installation.
         - EasyFixture now validates all fixtures at instantiation time.

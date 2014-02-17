@@ -1,6 +1,6 @@
 package DBIx::Class::EasyFixture::Tutorial;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 # this is not a .pod file because various repos replace the primary
 # documentation with a .pod file.

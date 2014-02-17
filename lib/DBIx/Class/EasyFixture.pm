@@ -5,7 +5,7 @@ use Moose;
 use Carp;
 use aliased 'DBIx::Class::EasyFixture::Definition';
 use namespace::autoclean;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 has 'schema' => (
     is       => 'ro',
@@ -191,7 +191,7 @@ DBIx::Class::EasyFixture - Easy-to-use DBIx::Class fixtures.
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 SYNOPSIS
 
