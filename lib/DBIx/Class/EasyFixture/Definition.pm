@@ -3,6 +3,7 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use Carp;
 use Storable 'dclone';
+use Scalar::Util 'blessed';
 use namespace::autoclean;
 
 our $VERSION = '0.03';
@@ -24,7 +25,7 @@ has 'fixtures' => (
     is       => 'ro',
     isa      => 'HashRef',
     required => 1,
-    handles => {
+    handles  => {
         fixture_exists => 'exists',
     },
 );
@@ -44,6 +45,27 @@ around 'BUILDARGS' => sub {
     if ( 'ARRAY' eq ref $args->{definition} ) {
         $args->{group}      = $args->{definition};
         $args->{definition} = {};
+    }
+    my $definition = $args->{definition};
+    if ( my $using = $definition->{using} ) {
+    $DB::single = 1;
+        foreach my $attribute ( keys %$using ) {
+            my $value = $using->{$attribute};
+            next if not ref $value or blessed($value);
+
+            my @requires
+              = 'ARRAY' eq ref $value ? @$value
+              : 'HASH' eq ref $value  ? %$value
+              : croak(
+                "Unhandled reference type passed for $definition->{name}.$attribute: $value"
+              );
+            unless ( 2 == @requires ) {
+                croak("$definition->{name}.$attribute malformes: @requires");
+            }
+            delete $using->{$attribute};
+            $definition->{requires} ||= {};
+            $definition->{requires}{ $requires[0] } = $requires[1];
+        }
     }
     $self->$orig( dclone($args) );
 };
@@ -84,7 +106,7 @@ sub _validate_class_and_data {
     my $data  = $self->constructor_data;
 
     if ( $class xor $data ) {
-        my $found   = $class ? 'new'  : 'using';
+        my $found   = $class ? 'new'   : 'using';
         my $missing = $class ? 'using' : 'new';
         my $name    = $self->name;
         croak("Fixture '$name' had a '$found' without a '$missing'");
@@ -105,7 +127,9 @@ sub _validate_next {
             croak("Fixture '$name' had non-string elements in 'next'");
         }
         unless ( $self->fixture_exists($child) ) {
-            croak("Fixture '$name' lists a non-existent fixture in 'next': '$child'");
+            croak(
+                "Fixture '$name' lists a non-existent fixture in 'next': '$child'"
+            );
         }
     }
 }
@@ -122,14 +146,17 @@ sub _validate_required_objects {
 
     # XXX don't use a while loop here because we might rewrite requires() and
     # that would break the iterator
-    foreach my $parent (keys %$requires) {
+    foreach my $parent ( keys %$requires ) {
         my $methods = $requires->{$parent};
         unless ( $self->fixture_exists($parent) ) {
-            croak("Fixture '$name' requires a non-existent fixture '$parent'");
+            croak(
+                "Fixture '$name' requires a non-existent fixture '$parent'");
         }
         if ( !ref $methods ) {
+
             # they used a single key and it matched
-            $self->definition->{requires}{$parent} = { our => $methods, their => $methods };
+            $self->definition->{requires}{$parent}
+              = { our => $methods, their => $methods };
             next;
         }
         if ( my @bad_keys = grep { !/^(?:our|their)$/ } keys %$methods ) {

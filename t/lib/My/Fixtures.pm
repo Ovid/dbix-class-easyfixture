@@ -37,11 +37,43 @@ my %definition_for = (
         },
         next => [qw/basic_customer/],
     },
+    person_with_customer_2 => {
+        new   => 'Person',
+        using => {
+            name     => "sally",
+            email    => 'person2@customer.com',
+            birthday => $birthday,
+        },
+        next => [qw/basic_customer/],
+    },
+    person_with_customer_3 => {
+        new   => 'Person',
+        using => {
+            name     => "sally",
+            email    => 'person3@customer.com',
+            birthday => $birthday,
+        },
+        next => [qw/basic_customer/],
+    },
     basic_customer => {
         new      => 'Customer',
         using    => { first_purchase => $purchase_date },
         requires => {
             person_with_customer => 'person_id',
+        },
+    },
+    customer_inline_require_hashref => {
+        new   => 'Customer',
+        using => {
+            first_purchase => $purchase_date,
+            person_id      => { person_with_customer_2 => 'person_id' },
+        },
+    },
+    customer_inline_require_arrayref => {
+        new   => 'Customer',
+        using => {
+            first_purchase => $purchase_date,
+            person_id      => [ person_with_customer_3 => 'person_id' ],
         },
     },
     order_without_items => {

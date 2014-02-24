@@ -45,16 +45,19 @@ sub load {
         $self->schema->txn_begin;
         $self->_set_in_transaction(1);
     }
+    my @dbic_objects;
     foreach my $fixture (@fixtures) {
         my $definition = $self->_get_definition_object($fixture);
         if ( my $group = $definition->group ) {
             $self->load(@$group);
         }
         else {
-            $self->_load($definition);
+            push @dbic_objects => $self->_load($definition);
         }
     }
-    return 1;
+    return 1 if not defined wantarray or not @dbic_objects;
+    return $dbic_objects[0] if not wantarray;
+    return @dbic_objects;
 }
 
 sub _get_definition_object {
