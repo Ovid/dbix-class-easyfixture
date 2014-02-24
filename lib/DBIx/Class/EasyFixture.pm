@@ -433,6 +433,18 @@ Or you can write the above like this:
         },
     }
 
+If both the current fixture and the other fixture it requires have the same
+name for the attribute, a reference to the other fixture name (scalar
+reference) will suffice:
+
+    {
+        new      => 'Customer',
+        using    => {
+            first_purchase => $datetime_object,
+            person_id      => \'some_person',
+            contact_id     => \'primary_contact',
+        },
+    }
 The above will construct the fixture like this:
 
     $schema->resultset('Customer')->create({

@@ -164,6 +164,10 @@ As a convenience, you can also get "bob" by doing this:
     $fixtures->load('basic_person');
     my $person = $fixtures->get_result('basic_person');
 
+Or by doing this:
+
+    my $person = $fixtures->load('basic_person');
+
 =head2 One-to-one relationships
 
 OK, that was easy, but what about this?
@@ -180,7 +184,7 @@ means each person might be a customer in a one-to-one relation (to be fair,
 one-to-one relationships are merely a special case of one-to-many
 relationships and works the same way in this module). We can turn 'bob' into a
 customer by adding a new fixture, but for this example, 'bob' won't be a
-customer. Instead, we'll create a separate person, sally, and make them a
+customer. Instead, we'll create a separate person, 'sally', and make them a
 customer:
 
     person_with_customer => {
@@ -194,12 +198,9 @@ customer:
     },
     basic_customer => {
         new      => 'Customer',
-        using    => { first_purchase => $datetime_object },
-        requires => {
-            person_with_customer => {
-                our   => 'person_id',
-                their => 'person_id',
-            },
+        using    => {
+            first_purchase => $datetime_object,
+            person_id      => { person_with_customer => 'person_id' },
         },
     },
 
@@ -210,6 +211,7 @@ reference of fixture names and tells us to load those fixtures I<after> the
 current one.
 
 =head3 C<requires>
+
 
 If you have a C<requires> key, it takes a hash refence. They keys are fixtures
 to be loaded I<before> the current fixture. The values are hash references of
@@ -254,6 +256,40 @@ If the "required" objects don't have attribute values that need to be passed
 to the current object, they should probably be passed in the C<next> parameter
 instead.
 
+If all of that for the C<requires> section seems complicated, just forget
+about it. We also let you do this:
+
+    {
+        new      => 'Customer',
+        using    => {
+            first_purchase => $datetime_object,
+            person_id      => { some_person => 'id' },
+        },
+    }
+
+In other words, if the value of a C<using> attribute is a hashref, we assume
+that the single key is the name of another fixture and we using that fixture's
+attribute to populate the current fixture's attribute. Internally, it's
+converted to a C<requires> block, but you don't need to know about that.
+
+If both the current fixture and the other fixture it requires have the same
+name for the attribute, a reference to the other fixture name (scalar
+reference) will suffice:
+
+    an_order_item => {
+        new => 'OrderItem',
+        using => {
+            price    => $some_price,
+            order_id => \'basic_order',
+            item_id  => \'item_screwdriver',
+        },
+    }
+
+In the above example, we have a fixture named C<an_order_item> that will
+create a new C<OrderItem> object and its C<order_id> will be the C<order_id>
+from the C<basic_order> fixture and the C<item_id> will be the C<item_id> from
+the C<item_screwdriver> fixture.
+
 =head3 Loading your one-to-one relationships.
 
 This is the same as loading a standalone object:
@@ -269,6 +305,13 @@ This is the same as loading a standalone object:
     my $customer = $fixtures->get_fixture('basic_customer');
 
     is $person->id, $customer->person_id, 'One-to-one relationships work';
+
+The main difference between those two C<load> calls is that the first returns
+a the C<basic_customer> fixture and the second returns the
+C<person_with_customer> fixture, though both load the same data:
+
+    my $customer = $fixtures->load('basic_customer');
+    my $person   = $fixtures->load('person_with_customer');
 
 =head2 One-to-many relationships
 
@@ -288,28 +331,25 @@ Let's add two orders for our C<basic_customer>.
 
     order_without_items => {
         new      => 'Order',
-        using    => { order_date => $purchase_date },
-        requires => {
-
-            # this is the same as
-            # basic_customer => 'customer_id'
-            basic_customer => {
-                our   => 'customer_id',
-                their => 'customer_id',
-            }
+        using    => {
+            order_date  => $purchase_date,
+            customer_id => { basic_customer => 'customer_id' },
         },
     },
     second_order_without_items => {
         new      => 'Order',
-        using    => { order_date => $purchase_date },
-        requires => {
-            basic_customer => 'customer_id',
+        using    => {
+            order_date  => $purchase_date,
+            customer_id => { basic_customer => 'customer_id' },
         },
     },
 
 And if you want to load both in your test code:
 
-    $fixtures->load(qw/order_without_items second_order_without_items/);
+    my @orders = $fixtures->load(qw/
+        order_without_items
+        second_order_without_items
+    /);
 
 That will properly load the C<basic_customer> (and, of course, the
 C<person_with_customer>). However, because C<basic_customer> did not have a
@@ -322,12 +362,9 @@ key:
 
     basic_customer => {
         new      => 'Customer',
-        using    => { first_purchase => $datetime_object },
-        requires => {
-            person_with_customer => {
-                our   => 'person_id',
-                their => 'person_id',
-            },
+        using    => {
+            first_purchase => $datetime_object,
+            person_id      => { person_with_customer => 'person_id' },
         },
         next => [qw/order_without_items second_order_without_items/],
     },
@@ -370,25 +407,25 @@ two order items.
     },
     order_item_hammer => {
         new      => 'OrderItem',
-        using    => { price => 1.2 },
-        requires => {
-            item_hammer      => 'item_id',
-            order_with_items => 'order_id',
+        using    => {
+            price    => 1.2,
+            item_id  => \'item_hammer',
+            order_id => \'order_with_items',
         },
     },
     order_item_screwdriver => {
         new      => 'OrderItem',
-        using    => { price => .7 },
-        requires => {
-            item_screwdriver => 'item_id',
-            order_with_items => 'order_id',
+        using    => {
+            price    => .7,
+            item_id  => \'item_screwdriver',
+            order_id => \'order_with_items',
         },
     },
     order_with_items => {
         new      => 'Order',
-        using    => { order_date => $purchase_date },
-        requires => {
-            basic_customer => 'customer_id',
+        using    => {
+            order_date  => $purchase_date,
+            customer_id => \'basic_customer',
         },
         next => [qw/order_item_hammer order_item_screwdriver/],
     },

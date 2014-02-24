@@ -48,14 +48,15 @@ around 'BUILDARGS' => sub {
     }
     my $definition = $args->{definition};
     if ( my $using = $definition->{using} ) {
-    $DB::single = 1;
         foreach my $attribute ( keys %$using ) {
             my $value = $using->{$attribute};
-            next if not ref $value or blessed($value);
+            my $ref = ref $value;
+            next if not $ref or blessed($value);
 
             my @requires
-              = 'ARRAY' eq ref $value ? @$value
-              : 'HASH' eq ref $value  ? %$value
+              = 'ARRAY' eq $ref ? @$value
+              : 'HASH' eq $ref  ? %$value
+              : 'SCALAR' eq $ref ? ( $$value => $attribute )
               : croak(
                 "Unhandled reference type passed for $definition->{name}.$attribute: $value"
               );

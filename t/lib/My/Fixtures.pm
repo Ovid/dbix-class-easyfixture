@@ -55,6 +55,15 @@ my %definition_for = (
         },
         next => [qw/basic_customer/],
     },
+    person_with_customer_4 => {
+        new   => 'Person',
+        using => {
+            name     => "sally",
+            email    => 'person4@customer.com',
+            birthday => $birthday,
+        },
+        next => [qw/basic_customer/],
+    },
     basic_customer => {
         new      => 'Customer',
         using    => { first_purchase => $purchase_date },
@@ -74,6 +83,13 @@ my %definition_for = (
         using => {
             first_purchase => $purchase_date,
             person_id      => [ person_with_customer_3 => 'person_id' ],
+        },
+    },
+    customer_inline_require_scalar => {
+        new   => 'Customer',
+        using => {
+            first_purchase => $purchase_date,
+            person_id      => \'person_with_customer_4',
         },
     },
     order_without_items => {
