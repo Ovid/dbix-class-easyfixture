@@ -230,7 +230,8 @@ following keys:
             },
         }
 
-    Or you can write the above like this:
+    Or you can skip the `requires` block entirely and write the above like this
+    (which is now the preferred syntax, but whatever floats your boat):
 
         {
             new      => 'Customer',
