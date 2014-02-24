@@ -113,7 +113,7 @@ definition. The definition must be either a fixture group or a fixture
 builder.
 
 A fixture group is an array reference containing a list of fixture names. For
-example, `$fixture->get_definition('all_people') might return:`
+example, `$fixture->get_definition('all_people')` might return:
 
     [qw/ person_1 person_2 person_2 /]
 
@@ -241,6 +241,18 @@ following keys:
             },
         }
 
+    If both the current fixture and the other fixture it requires have the same
+    name for the attribute, a reference to the other fixture name (scalar
+    reference) will suffice:
+
+        {
+            new      => 'Customer',
+            using    => {
+                first_purchase => $datetime_object,
+                person_id      => \'some_person',
+                contact_id     => \'primary_contact',
+            },
+        }
     The above will construct the fixture like this:
 
         $schema->resultset('Customer')->create({
@@ -351,11 +363,3 @@ YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
 CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# POD ERRORS
-
-Hey! __The above document had some coding errors, which are explained below:__
-
-- Around line 305:
-
-    Unterminated C< ... > sequence
