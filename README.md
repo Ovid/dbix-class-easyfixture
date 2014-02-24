@@ -17,8 +17,8 @@ Version 0.03
 
 And in your test code:
 
-    my $fixtures = My::Fixtures->new( { schema => $schema } );
-    $fixtures->load('some_fixture');
+    my $fixtures    = My::Fixtures->new( { schema => $schema } );
+    my $dbic_object = $fixtures->load('some_fixture');
 
     # run your tests
 
@@ -82,11 +82,12 @@ versions).
 
 ## `load`
 
-    $fixtures->load(@list_of_fixture_names);
+    my @dbic_objects = $fixtures->load(@list_of_fixture_names);
 
 Attempts to load all fixtures passed to it. If a transaction has not already
 been started, it will be started now. This method may be called multiple
-times.
+times and it returns the fixtures loaded. If called in scalar context, only
+returns the first fixture loaded.
 
 ## `unload`
 
@@ -194,6 +195,17 @@ following keys:
             },
         }
 
+    If you prefer, you can _inline_ the `requires` into the `using` key. You
+    may find this syntax cleaner:
+
+        {
+            new      => 'Customer',
+            using    => {
+                first_purchase => $datetime_object,
+                person_id      => { some_person => 'id' },
+            },
+        }
+
     The `our` key refers to the attribute for the `Customer` fixture and the
     `their` key refers to the attribute of the `Person` fixture. As a
     convenience, if both attributes have the same name, you can omit that hashref
@@ -215,6 +227,17 @@ following keys:
             requires => {
                 some_person     => 'person_id',
                 primary_contact => 'contact_id',
+            },
+        }
+
+    Or you can write the above like this:
+
+        {
+            new      => 'Customer',
+            using    => {
+                first_purchase => $datetime_object,
+                person_id      => { some_person     => 'person_id' },
+                contact_id     => { primary_contact => 'contact_id' },
             },
         }
 
@@ -333,6 +356,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! __The above document had some coding errors, which are explained below:__
 
-- Around line 301:
+- Around line 305:
 
     Unterminated C< ... > sequence

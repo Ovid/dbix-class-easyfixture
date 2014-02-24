@@ -49,7 +49,7 @@ sub load {
     foreach my $fixture (@fixtures) {
         my $definition = $self->_get_definition_object($fixture);
         if ( my $group = $definition->group ) {
-            $self->load(@$group);
+            push @dbic_objects => $self->load(@$group);
         }
         else {
             push @dbic_objects => $self->_load($definition);
@@ -207,8 +207,8 @@ Version 0.03
 
 And in your test code:
 
-    my $fixtures = My::Fixtures->new( { schema => $schema } );
-    $fixtures->load('some_fixture');
+    my $fixtures    = My::Fixtures->new( { schema => $schema } );
+    my $dbic_object = $fixtures->load('some_fixture');
 
     # run your tests
 
@@ -272,11 +272,12 @@ versions).
 
 =head2 C<load>
 
-    $fixtures->load(@list_of_fixture_names);
+    my @dbic_objects = $fixtures->load(@list_of_fixture_names);
 
 Attempts to load all fixtures passed to it. If a transaction has not already
 been started, it will be started now. This method may be called multiple
-times.
+times and it returns the fixtures loaded. If called in scalar context, only
+returns the first fixture loaded.
 
 =head2 C<unload>
 
@@ -386,6 +387,17 @@ C<some_person> and its ID is named C<id>, we can do this:
         },
     }
 
+If you prefer, you can I<inline> the C<requires> into the C<using> key. You
+may find this syntax cleaner:
+
+    {
+        new      => 'Customer',
+        using    => {
+            first_purchase => $datetime_object,
+            person_id      => { some_person => 'id' },
+        },
+    }
+
 The C<our> key refers to the attribute for the C<Customer> fixture and the
 C<their> key refers to the attribute of the C<Person> fixture. As a
 convenience, if both attributes have the same name, you can omit that hashref
@@ -407,6 +419,17 @@ And multiple C<requires> can be specified:
         requires => {
             some_person     => 'person_id',
             primary_contact => 'contact_id',
+        },
+    }
+
+Or you can write the above like this:
+
+    {
+        new      => 'Customer',
+        using    => {
+            first_purchase => $datetime_object,
+            person_id      => { some_person     => 'person_id' },
+            contact_id     => { primary_contact => 'contact_id' },
         },
     }
 
