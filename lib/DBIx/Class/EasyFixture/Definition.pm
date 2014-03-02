@@ -74,7 +74,10 @@ around 'BUILDARGS' => sub {
 sub BUILD {
     my $self = shift;
 
-    unless ( $self->group ) {
+    if ( $self->group ) {
+        $self->_validate_group;
+    }
+    else {
         $self->_validate_keys;
         $self->_validate_class_and_data;
         $self->_validate_next;
@@ -87,6 +90,18 @@ sub constructor_data { shift->definition->{using} }
 sub next             { shift->definition->{next} }
 sub requires         { shift->definition->{requires} }
 
+sub _validate_group {
+    my $self  = shift;
+    my $name  = $self->name;
+    my @group = @{ $self->group };    # shallow copy currently ok
+    unless ( @group ) {
+        croak("Fixture '$name' defines an empty group");
+    }
+    if ( my @unknown = sort grep { ! $self->fixture_exists($_) } @group ) {
+        croak("Fixture '$name'.group had unknown fixtures: @unknown");
+    }
+
+}
 sub _validate_keys {
     my $self       = shift;
     my $name       = $self->name;

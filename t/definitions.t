@@ -49,8 +49,7 @@ ok !defined $definition->requires,
   '... and no requirements if they are not defined';
 
 subtest 'exceptions' => sub {
-    subtest 'definition build' => sub {
-        my %ignore = ( new => 'Foo', using => { bar => 1 } );
+    subtest 'definition constructor' => sub {
         throws_ok {
             Definition->new(
                 name       => "bob",
@@ -69,6 +68,26 @@ subtest 'exceptions' => sub {
         }
         qr/bob.foo_id malformed: foo bar baz/,
           'Having more than 2 elements in requires should fail';
+    };
+    subtest 'definition group' => sub {
+        throws_ok {
+            Definition->new(
+                name       => "bob",
+                definition => [],
+                fixtures   => { bob => 1 },
+            );
+        }
+        qr/Fixture 'bob' defines an empty group/,
+          'Having an empty group should fail';
+        throws_ok {
+            Definition->new(
+                name       => "bob",
+                definition => [qw(larry damian)],
+                fixtures   => { bob => 1 },
+            );
+        }
+        qr/Fixture 'bob'.group had unknown fixtures: damian larry/,
+          'Having a group using unknown fixtures should fail';
     };
     subtest 'definition class and data' => sub {
         throws_ok {
