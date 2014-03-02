@@ -61,7 +61,7 @@ around 'BUILDARGS' => sub {
                 "Unhandled reference type passed for $definition->{name}.$attribute: $value"
               );
             unless ( 2 == @requires ) {
-                croak("$definition->{name}.$attribute malformes: @requires");
+                croak("$definition->{name}.$attribute malformed: @requires");
             }
             delete $using->{$attribute};
             $definition->{requires} ||= {};
