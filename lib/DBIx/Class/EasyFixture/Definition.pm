@@ -58,10 +58,10 @@ around 'BUILDARGS' => sub {
               : 'HASH' eq $ref  ? %$value
               : 'SCALAR' eq $ref ? ( $$value => $attribute )
               : croak(
-                "Unhandled reference type passed for $definition->{name}.$attribute: $value"
+                "Unhandled reference type passed for $args->{name}.$attribute: $value"
               );
             unless ( 2 == @requires ) {
-                croak("$definition->{name}.$attribute malformed: @requires");
+                croak("$args->{name}.$attribute malformed: @requires");
             }
             delete $using->{$attribute};
             $definition->{requires} ||= {};
