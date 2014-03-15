@@ -1,10 +1,10 @@
 # NAME
 
-DBIx::Class::EasyFixture - Easy-to-use DBIx::Class fixtures.
+DBIx::Class::EasyFixture - Easy fixtures with DBIx::Class
 
 # VERSION
 
-Version 0.03
+version 0.04
 
 # SYNOPSIS
 
@@ -103,6 +103,19 @@ Rolls back the transaction started with `load`
 
 Returns a boolean value indicating whether or not the given fixture was
 loaded.
+
+# TRANSACTIONS
+
+If you attempt to load a fixture, a transaction is started and it will be
+rolled back when you call `unload()` or when the fixture object falls out of
+scope. If, for some reason, you do not want transactions (for example, if you
+need to controll them manually), you can use a true value with the
+`no_transactions` argument.
+
+    my $fixtures = My::Fixtures->new(
+        schema          => $schema,
+        no_transactions => 1,
+    );
 
 # FIXTURES
 
@@ -286,81 +299,13 @@ Curtis "Ovid" Poe, `<ovid at cpan.org>`
     Track what fixtures are requested and what fixtures are loaded (and in which
     order).  This makes for better error reporting.
 
-# BUGS
+    # AUTHOR
 
-Please report any bugs or feature requests to `bug-dbix-class-simplefixture
-at rt.cpan.org`, or through the web interface at
-[https://github.com/Ovid/dbix-class-easyfixture/issues](https://github.com/Ovid/dbix-class-easyfixture/issues).  I
-will be notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
+    Curtis "Ovid" Poe <ovid@cpan.org>
 
-# SUPPORT
+    # COPYRIGHT AND LICENSE
 
-You can find documentation for this module with the perldoc command.
+    This software is copyright (c) 2014 by Curtis "Ovid" Poe.
 
-    perldoc DBIx::Class::EasyFixture
-    perldoc DBIx::Class::EasyFixture::Tutorial
-
-You can also look for information at:
-
-- RT: CPAN's request tracker (report bugs here)
-
-    [https://github.com/Ovid/dbix-class-easyfixture/issues](https://github.com/Ovid/dbix-class-easyfixture/issues)
-
-- AnnoCPAN: Annotated CPAN documentation
-
-    [http://annocpan.org/dist/DBIx-Class-EasyFixture](http://annocpan.org/dist/DBIx-Class-EasyFixture)
-
-- CPAN Ratings
-
-    [http://cpanratings.perl.org/d/DBIx-Class-EasyFixture](http://cpanratings.perl.org/d/DBIx-Class-EasyFixture)
-
-- Search CPAN
-
-    [http://search.cpan.org/dist/DBIx-Class-EasyFixture/](http://search.cpan.org/dist/DBIx-Class-EasyFixture/)
-
-# ACKNOWLEDGEMENTS
-
-Many thanks to [http://www.allaroundtheworld.fr/](http://www.allaroundtheworld.fr/) for sponsoring this work.
-
-See also [http://search.cpan.org/dist/DBIx-Class-Fixtures/](http://search.cpan.org/dist/DBIx-Class-Fixtures/).
-
-# LICENSE AND COPYRIGHT
-
-Copyright 2014 Curtis "Ovid" Poe.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the the Artistic License (2.0). You may obtain a
-copy of the full license at:
-
-[http://www.perlfoundation.org/artistic\_license\_2\_0](http://www.perlfoundation.org/artistic_license_2_0)
-
-Any use, modification, and distribution of the Standard or Modified
-Versions is governed by this Artistic License. By using, modifying or
-distributing the Package, you accept this license. Do not use, modify,
-or distribute the Package, if you do not accept this license.
-
-If your Modified Version has been derived from a Modified Version made
-by someone other than you, you are nevertheless required to ensure that
-your Modified Version complies with the requirements of this license.
-
-This license does not grant you the right to use any trademark, service
-mark, tradename, or logo of the Copyright Holder.
-
-This license includes the non-exclusive, worldwide, free-of-charge
-patent license to make, have made, use, offer to sell, sell, import and
-otherwise transfer the Package with respect to any patent claims
-licensable by the Copyright Holder that are necessarily infringed by the
-Package. If you institute patent litigation (including a cross-claim or
-counterclaim) against any party alleging that the Package constitutes
-direct or contributory patent infringement, then this Artistic License
-to you shall terminate on the date that such litigation is filed.
-
-Disclaimer of Warranty: THE PACKAGE IS PROVIDED BY THE COPYRIGHT HOLDER
-AND CONTRIBUTORS "AS IS' AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES.
-THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE, OR NON-INFRINGEMENT ARE DISCLAIMED TO THE EXTENT PERMITTED BY
-YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
-CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
-CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
