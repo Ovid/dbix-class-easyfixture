@@ -4,7 +4,7 @@ DBIx::Class::EasyFixture - Easy fixtures with DBIx::Class
 
 # VERSION
 
-version 0.04
+version 0.05
 
 # SYNOPSIS
 
