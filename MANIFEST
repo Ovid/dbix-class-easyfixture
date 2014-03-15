@@ -36,6 +36,7 @@ t/load_multiple_fixtures.t
 t/many_to_many.t
 t/one_to_many.t
 t/one_to_one.t
+t/no_transactions.t
 xt/manifest.t
 xt/pod-coverage.t
 xt/pod.t

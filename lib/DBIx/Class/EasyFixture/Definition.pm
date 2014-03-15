@@ -6,7 +6,7 @@ use Storable 'dclone';
 use Scalar::Util 'blessed';
 use namespace::autoclean;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 has 'name' => (
     is       => 'ro',

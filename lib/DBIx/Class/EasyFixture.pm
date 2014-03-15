@@ -5,7 +5,7 @@ use Moose;
 use Carp;
 use aliased 'DBIx::Class::EasyFixture::Definition';
 use namespace::autoclean;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 has 'schema' => (
     is       => 'ro',
@@ -30,6 +30,11 @@ has '_cache' => (
         fixture_loaded => 'exists',
     },
 );
+has 'no_transactions' => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 0,
+);
 
 sub BUILD {
     my $self = shift;
@@ -41,7 +46,7 @@ sub BUILD {
 
 sub load {
     my ( $self, @fixtures ) = @_;
-    unless ( $self->_in_transaction ) {
+    if ( not $self->no_transactions and not $self->_in_transaction ) {
         $self->schema->txn_begin;
         $self->_set_in_transaction(1);
     }
@@ -157,7 +162,7 @@ sub _load_next_fixtures {
 
 sub unload {
     my $self = shift;
-    if ( $self->_in_transaction ) {
+    if ( not $self->no_transactions and $self->_in_transaction ) {
         $self->schema->txn_rollback;
         $self->_clear;
         $self->_set_in_transaction(0);
@@ -194,7 +199,7 @@ DBIx::Class::EasyFixture - Easy-to-use DBIx::Class fixtures.
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =head1 SYNOPSIS
 
@@ -293,6 +298,19 @@ Rolls back the transaction started with C<load>
 
 Returns a boolean value indicating whether or not the given fixture was
 loaded.
+
+=head1 TRANSACTIONS
+
+If you attempt to load a fixture, a transaction is started and it will be
+rolled back when you call C<unload()> or when the fixture object falls out of
+scope. If, for some reason, you do not want transactions (for example, if you
+need to controll them manually), you can use a true value with the
+C<no_transactions> argument.
+
+    my $fixtures = My::Fixtures->new(
+        schema          => $schema,
+        no_transactions => 1,
+    );
 
 =head1 FIXTURES
 

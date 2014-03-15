@@ -1,5 +1,8 @@
 Revision history for DBIx-Class-EasyFixture
 
+0.04    2014-03-14
+        - Allow users to disable transactions, if needed.
+
 0.03    2014-02-24
         - load() now returns the dbic objects it loads
         - Fixture attributes depending on another fixture can be described inline.
