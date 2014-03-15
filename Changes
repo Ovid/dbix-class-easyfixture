@@ -1,5 +1,9 @@
 Revision history for DBIx-Class-EasyFixture
 
+0.05
+        - Validate that groups are not empty (GeJ)
+        - Typo fixes (GeJ)
+
 0.04    2014-03-14
         - Allow users to disable transactions, if needed.
 
