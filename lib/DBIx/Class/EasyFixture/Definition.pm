@@ -59,10 +59,10 @@ around 'BUILDARGS' => sub {
               : 'HASH' eq $ref  ? %$value
               : 'SCALAR' eq $ref ? ( $$value => $attribute )
               : croak(
-                "Unhandled reference type passed for $definition->{name}.$attribute: $value"
+                "Unhandled reference type passed for $args->{name}.$attribute: $value"
               );
             unless ( 2 == @requires ) {
-                croak("$definition->{name}.$attribute malformes: @requires");
+                croak("$args->{name}.$attribute malformed: @requires");
             }
             delete $using->{$attribute};
             $definition->{requires} ||= {};
@@ -75,7 +75,10 @@ around 'BUILDARGS' => sub {
 sub BUILD {
     my $self = shift;
 
-    unless ( $self->group ) {
+    if ( $self->group ) {
+        $self->_validate_group;
+    }
+    else {
         $self->_validate_keys;
         $self->_validate_class_and_data;
         $self->_validate_next;
@@ -88,6 +91,18 @@ sub constructor_data { shift->definition->{using} }
 sub next             { shift->definition->{next} }
 sub requires         { shift->definition->{requires} }
 
+sub _validate_group {
+    my $self  = shift;
+    my $name  = $self->name;
+    my @group = @{ $self->group };    # shallow copy currently ok
+    unless ( @group ) {
+        croak("Fixture '$name' defines an empty group");
+    }
+    if ( my @unknown = sort grep { ! $self->fixture_exists($_) } @group ) {
+        croak("Fixture '$name'.group had unknown fixtures: @unknown");
+    }
+
+}
 sub _validate_keys {
     my $self       = shift;
     my $name       = $self->name;

@@ -49,6 +49,46 @@ ok !defined $definition->requires,
   '... and no requirements if they are not defined';
 
 subtest 'exceptions' => sub {
+    subtest 'definition constructor' => sub {
+        throws_ok {
+            Definition->new(
+                name       => "bob",
+                definition => { new => 'Foo', using => { foo_id => sub{} } },
+                fixtures   => { bob => 1 },
+            );
+        }
+        qr/Unhandled reference type passed for bob.foo_id/,
+          'Having a code reference as a requires should fail';
+        throws_ok {
+            Definition->new(
+                name       => "bob",
+                definition => { new => 'Foo', using => { foo_id => [qw(foo bar baz)] } },
+                fixtures   => { bob => 1 },
+            );
+        }
+        qr/bob.foo_id malformed: foo bar baz/,
+          'Having more than 2 elements in requires should fail';
+    };
+    subtest 'definition group' => sub {
+        throws_ok {
+            Definition->new(
+                name       => "bob",
+                definition => [],
+                fixtures   => { bob => 1 },
+            );
+        }
+        qr/Fixture 'bob' defines an empty group/,
+          'Having an empty group should fail';
+        throws_ok {
+            Definition->new(
+                name       => "bob",
+                definition => [qw(larry damian)],
+                fixtures   => { bob => 1 },
+            );
+        }
+        qr/Fixture 'bob'.group had unknown fixtures: damian larry/,
+          'Having a group using unknown fixtures should fail';
+    };
     subtest 'definition class and data' => sub {
         throws_ok {
             Definition->new(
