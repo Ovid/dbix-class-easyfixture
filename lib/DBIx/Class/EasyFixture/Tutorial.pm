@@ -1,6 +1,6 @@
 package DBIx::Class::EasyFixture::Tutorial;
 
-our $VERSION = '0.03';
+# ABSTRACT: what it says on the tin
 
 # this is not a .pod file because various repos replace the primary
 # documentation with a .pod file.
@@ -8,10 +8,6 @@ our $VERSION = '0.03';
 1;
 
 __END__
-
-=head1 NAME
-
-DBIx::Class::EasyFixture::Tutorial - what it says on the tin
 
 =head1 RATIONALE
 

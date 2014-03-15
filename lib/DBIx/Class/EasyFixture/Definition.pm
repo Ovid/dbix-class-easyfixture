@@ -1,12 +1,13 @@
 package DBIx::Class::EasyFixture::Definition;
+
+# ABSTRACT: Validate fixture definitions
+
 use Moose;
 use Moose::Util::TypeConstraints;
 use Carp;
 use Storable 'dclone';
 use Scalar::Util 'blessed';
 use namespace::autoclean;
-
-our $VERSION = '0.04';
 
 has 'name' => (
     is       => 'ro',
@@ -177,10 +178,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-DBIx::Class::EasyFixture::Definition - Validate fixture definitions
 
 =head2 DESCRIPTION
 
