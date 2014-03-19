@@ -7,7 +7,27 @@ use Test::More;
 plan tests => 1;
 
 BEGIN {
-    use_ok( 'DBIx::Class::EasyFixture' ) || print "Bail out!\n";
+    use_ok('DBIx::Class::EasyFixture') || print "Bail out!\n";
+
+    my @classes = sort qw(
+      DateTime
+      DateTime::Format::SQLite
+      DBD::SQLite
+      DBI
+      DBIx::Class
+      List::MoreUtils
+      Moose
+      namespace::autoclean
+    );
+
+    foreach my $class (@classes) {
+        eval "use $class";
+        die $@ if $@;
+        diag sprintf "%-35s version %s" => "$class",
+          ( $class->VERSION || 'unknown' );
+    }
 }
 
-diag( "Testing DBIx::Class::EasyFixture $DBIx::Class::EasyFixture::VERSION, Perl $], $^X" );
+Test::More::diag(
+    "Testing DBIx::Class::EasyFixture $DBIx::Class::EasyFixture::VERSION, Perl $], $^X"
+);

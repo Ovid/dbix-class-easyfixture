@@ -1,5 +1,10 @@
 Revision history for DBIx-Class-EasyFixture
 
+0.11    2014-03-19
+        - Fix dist.ini to properly list dependencies
+        - Instrument tests to try to track down a problem with a (bad?)
+          smoker. Example: http://www.cpantesters.org/cpan/report/c59eb3e6-af3a-11e3-a18e-21107fda8cd6
+
 0.10    2014-03-19
         - Bugfix: circular definitions no longer cause infinite recursion.
         - Bugfix: corrected issue where serial "next" definitions in fixtures

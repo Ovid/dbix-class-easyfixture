@@ -3,6 +3,7 @@ use lib 't/lib';
 use Sample::Schema;
 use My::Fixtures;
 use Capture::Tiny 'capture';
+use Carp::Always;
 
 my $schema = Sample::Schema->test_schema;
 ok my $fixtures = My::Fixtures->new( schema => $schema ),
