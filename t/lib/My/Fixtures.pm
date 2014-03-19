@@ -173,6 +173,7 @@ my %definition_for = (
     item_4 => {
         new   => 'Item',
         using => { name => "Chain 4", price => 4 },
+        next  => [qw/item_1/], # deliberate circular definition
     },
 );
 

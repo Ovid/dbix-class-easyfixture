@@ -79,7 +79,7 @@ sub _get_definition_object {
 sub get_result {
     my ( $self, $fixture ) = @_;
 
-    unless ( $self->fixture_loaded($fixture) ) {
+    unless ( $self->is_loaded($fixture) ) {
         carp("Fixture '$fixture' was never loaded");
         return;
     }
@@ -96,7 +96,7 @@ sub _get_object {
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
                 my $other = $self->_get_result($parent)
-                    or croak("Panic: required object '$parent' not loaded");
+                  or croak("Panic: required object '$parent' not loaded");
                 my ( $our, $their ) = @{$methods}{qw/our their/};
                 $args->{$our} = $other->$their;
             }
@@ -110,6 +110,11 @@ sub _get_object {
 
 sub _load {
     my ( $self, $definition ) = @_;
+
+    # XXX This is our guard against circular definitions.
+    if ( $self->is_loaded( $definition->name ) ) {
+        return $self->_get_result( $definition->name );
+    }
 
     if ( my $requires = $definition->requires ) {
         $self->_load_previous_fixtures($requires);
@@ -134,31 +139,21 @@ sub _load_previous_fixtures {
 sub _load_next_fixtures {
     my ( $self, $next ) = @_;
 
-    # check for circular definitions!
     foreach my $fixture (@$next) {
         my $definition = $self->_get_definition_object($fixture);
-        my %data       = %{ $definition->constructor_data };
+
+        # a fixture may say "load these other fixtures next", but if that
+        # appens, those "next" fixtures may have different parent fixtures
+        # that they require, so we load them here.
         if ( my $requires = $definition->requires ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
-                my $related_object = $self->_get_result($parent)
-                    || $self->_load($self->_get_definition_object($parent))
-                    || croak("Panic: related object '$parent' not loaded");
-                my $related_method = $methods->{their};
-                $data{ $methods->{our} } = $related_object->$related_method;
+                $self->_load( $self->_get_definition_object($parent) )
+                  || croak("Panic: related object '$parent' not loaded");
             }
         }
-        $self->_load(
-            Definition->new(
-                {   name       => $fixture,
-                    definition => {
-                        new   => $definition->resultset_class,
-                        using => \%data,
-                        next  => $definition->next,
-                    },
-                    fixtures   => { map { $_ => 1 } $self->all_fixture_names },
-                }
-            )
-        );
+
+        # ... and *now* we can load the fixture
+        $self->_load($definition);
     }
 }
 
@@ -184,7 +179,7 @@ sub get_definition {
     croak("You must override get_definition() in a subclass");
 }
 
-sub fixture_loaded { $_[0]->is_loaded($_[1]) }
+sub fixture_loaded { $_[0]->is_loaded( $_[1] ) }
 
 sub DEMOLISH {
     my $self = shift;
@@ -286,14 +281,17 @@ returns the first fixture loaded.
 
 Rolls back the transaction started with C<load>
 
-=head2 C<fixture_loaded>
+=head2 C<is_loaded>
 
-    if ( $fixtures->fixture_loaded($fixture_name) ) {
+    if ( $fixtures->is_loaded($fixture_name) ) {
         ...
     }
 
 Returns a boolean value indicating whether or not the given fixture was
 loaded.
+
+*Note*: Originally this method was called C<fixture_loaded>. That was a bad
+name. However, C<fixture_loaded> still works as an alias to C<is_loaded>.
 
 =head1 TRANSACTIONS
 
