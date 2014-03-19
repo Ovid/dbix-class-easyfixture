@@ -4,7 +4,7 @@ DBIx::Class::EasyFixture - Easy fixtures with DBIx::Class
 
 # VERSION
 
-version 0.05
+version 0.10
 
 # SYNOPSIS
 
@@ -95,14 +95,17 @@ returns the first fixture loaded.
 
 Rolls back the transaction started with `load`
 
-## `fixture_loaded`
+## `is_loaded`
 
-    if ( $fixtures->fixture_loaded($fixture_name) ) {
+    if ( $fixtures->is_loaded($fixture_name) ) {
         ...
     }
 
 Returns a boolean value indicating whether or not the given fixture was
 loaded.
+
+\*Note\*: Originally this method was called `fixture_loaded`. That was a bad
+name. However, `fixture_loaded` still works as an alias to `is_loaded`.
 
 # TRANSACTIONS
 
