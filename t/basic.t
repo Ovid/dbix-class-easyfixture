@@ -68,4 +68,14 @@ subtest 'inline attributes' => sub {
         'Fixtures defined with inline scalar refs should work';
 };
 
+subtest 'Fixture chains: a next b next c next d' => sub {
+    ok my $item = $fixtures->load('item_1'),
+        'We should be able to load a "chain" of fixtures';
+
+    foreach my $name (qw/item_2 item_3 item_4/) {
+        ok $fixtures->is_loaded($name),
+            "... and '$name', the next item in the chain should be loaded";
+    }
+};
+
 done_testing;

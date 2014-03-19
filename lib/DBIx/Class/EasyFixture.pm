@@ -25,10 +25,10 @@ has '_cache' => (
     isa     => 'HashRef',
     default => sub { {} },
     handles => {
-        _set_fixture   => 'set',
-        _get_result    => 'get',
-        _clear         => 'clear',
-        fixture_loaded => 'exists',
+        _set_fixture => 'set',
+        _get_result  => 'get',
+        _clear       => 'clear',
+        is_loaded    => 'exists',
     },
 );
 has 'no_transactions' => (
@@ -153,6 +153,7 @@ sub _load_next_fixtures {
                     definition => {
                         new   => $definition->resultset_class,
                         using => \%data,
+                        next  => $definition->next,
                     },
                     fixtures   => { map { $_ => 1 } $self->all_fixture_names },
                 }
@@ -182,6 +183,8 @@ sub all_fixture_names {
 sub get_definition {
     croak("You must override get_definition() in a subclass");
 }
+
+sub fixture_loaded { $_[0]->is_loaded($_[1]) }
 
 sub DEMOLISH {
     my $self = shift;

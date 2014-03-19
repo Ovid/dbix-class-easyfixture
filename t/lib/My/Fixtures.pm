@@ -122,6 +122,7 @@ my %definition_for = (
         new   => 'Item',
         using => { name => "Screwdriver", price => 1.4 },
     },
+
     order_item_hammer => {
         new      => 'OrderItem',
         using    => { price => 1.2 },
@@ -150,6 +151,28 @@ my %definition_for = (
             },
         },
         next => [qw/order_item_hammer order_item_screwdriver/],
+    },
+
+    # these next four items are designed to uncover a bug whereby one
+    # can't chain multiple fixtures via next.
+    item_1 => {
+        new   => 'Item',
+        using => { name => "Chain 1", price => 1 },
+        next  => [qw/item_2/],
+    },
+    item_2 => {
+        new   => 'Item',
+        using => { name => "Chain 2", price => 2 },
+        next  => [qw/item_3/],
+    },
+    item_3 => {
+        new   => 'Item',
+        using => { name => "Chain 3", price => 3 },
+        next  => [qw/item_4/],
+    },
+    item_4 => {
+        new   => 'Item',
+        using => { name => "Chain 4", price => 4 },
     },
 );
 
