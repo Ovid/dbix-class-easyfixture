@@ -1,6 +1,9 @@
 Revision history for DBIx-Class-EasyFixture
 
-0.05
+0.10    2014-03-19
+        - Bugfix: circular definitions no longer cause infinite recursion.
+        - Bugfix: corrected issue where serial "next" definitions in fixtures
+          wouldn't load (spotted by GeJ)
         - Validate that groups are not empty (GeJ)
         - Typo fixes (GeJ)
 
