@@ -39,7 +39,6 @@ my %WriteMakefileArgs = (
     "DBIx::Class::Schema" => 0,
     "DateTime" => 0,
     "DateTime::Format::SQLite" => "0.11",
-    "List::MoreUtils" => "0.33",
     "Test::More" => 0,
     "Test::Most" => 0,
     "base" => 0,
