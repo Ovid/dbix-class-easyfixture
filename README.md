@@ -302,13 +302,21 @@ Curtis "Ovid" Poe, `<ovid at cpan.org>`
     Track what fixtures are requested and what fixtures are loaded (and in which
     order).  This makes for better error reporting.
 
-    # AUTHOR
+# AUTHOR
 
-    Curtis "Ovid" Poe <ovid@cpan.org>
+Curtis "Ovid" Poe <ovid@cpan.org>
 
-    # COPYRIGHT AND LICENSE
+# COPYRIGHT AND LICENSE
 
-    This software is copyright (c) 2014 by Curtis "Ovid" Poe.
+This software is copyright (c) 2014 by Curtis "Ovid" Poe.
 
-    This is free software; you can redistribute it and/or modify it under
-    the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+# POD ERRORS
+
+Hey! __The above document had some coding errors, which are explained below:__
+
+- Around line 315:
+
+    You forgot a '=back' before '=head1'
