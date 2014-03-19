@@ -22,7 +22,7 @@ my %WriteMakefileArgs = (
   "NAME" => "DBIx::Class::EasyFixture",
   "PREREQ_PM" => {},
   "TEST_REQUIRES" => {},
-  "VERSION" => "0.05",
+  "VERSION" => "0.10",
   "test" => {
     "TESTS" => "t/*.t"
   }
