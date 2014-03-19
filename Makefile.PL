@@ -20,8 +20,28 @@ my %WriteMakefileArgs = (
   "EXE_FILES" => [],
   "LICENSE" => "perl",
   "NAME" => "DBIx::Class::EasyFixture",
-  "PREREQ_PM" => {},
-  "TEST_REQUIRES" => {},
+  "PREREQ_PM" => {
+    "Carp" => 0,
+    "Moose" => 0,
+    "Moose::Util::TypeConstraints" => 0,
+    "Scalar::Util" => 0,
+    "Storable" => 0,
+    "aliased" => 0,
+    "namespace::autoclean" => 0
+  },
+  "TEST_REQUIRES" => {
+    "Capture::Tiny" => 0,
+    "DBIx::Class::Core" => 0,
+    "DBIx::Class::Schema" => 0,
+    "DateTime" => 0,
+    "Test::More" => 0,
+    "Test::Most" => 0,
+    "base" => 0,
+    "lib" => 0,
+    "strict" => 0,
+    "utf8" => 0,
+    "warnings" => 0
+  },
   "VERSION" => "0.10",
   "test" => {
     "TESTS" => "t/*.t"
@@ -29,7 +49,26 @@ my %WriteMakefileArgs = (
 );
 
 
-my %FallbackPrereqs = ();
+my %FallbackPrereqs = (
+  "Capture::Tiny" => 0,
+  "Carp" => 0,
+  "DBIx::Class::Core" => 0,
+  "DBIx::Class::Schema" => 0,
+  "DateTime" => 0,
+  "Moose" => 0,
+  "Moose::Util::TypeConstraints" => 0,
+  "Scalar::Util" => 0,
+  "Storable" => 0,
+  "Test::More" => 0,
+  "Test::Most" => 0,
+  "aliased" => 0,
+  "base" => 0,
+  "lib" => 0,
+  "namespace::autoclean" => 0,
+  "strict" => 0,
+  "utf8" => 0,
+  "warnings" => 0
+);
 
 
 unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
