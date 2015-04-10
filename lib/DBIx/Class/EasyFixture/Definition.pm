@@ -66,7 +66,7 @@ around 'BUILDARGS' => sub {
             }
             delete $using->{$attribute};
             $definition->{requires} ||= {};
-            $definition->{requires}{ $requires[0] } = $requires[1];
+            $definition->{requires}{ $requires[0] } = { our => $attribute, their => $requires[1] };
         }
     }
     $self->$orig( dclone($args) );
