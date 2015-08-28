@@ -1,5 +1,8 @@
 Revision history for DBIx-Class-EasyFixture
 
+0.12    2015-08-28
+        - Add support for bi-directional relationships (via github:lohengrin332)
+
 0.11    2014-03-19
         - Fix dist.ini to properly list dependencies
         - Instrument tests to try to track down a problem with a (bad?)
