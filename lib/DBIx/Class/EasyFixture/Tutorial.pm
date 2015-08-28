@@ -431,7 +431,7 @@ fixtures like this because internally we cache created fixtures.
 
 =head2 Bi-directional relationships (deferred requires).
 
-Occasionally you might need two entities that relate to eachother,
+Occasionally you might need two entities that relate to each other,
 signifying different relationships:
 
     CREATE TABLE people (
