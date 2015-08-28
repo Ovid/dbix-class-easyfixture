@@ -429,6 +429,88 @@ two order items.
 Note that the C<order_with_items> also uses the basic customer. You can reuse
 fixtures like this because internally we cache created fixtures.
 
+=head2 Bi-directional relationships (deferred requires).
+
+Occasionally you might need two entities that relate to eachother,
+signifying different relationships:
+
+    CREATE TABLE people (
+        person_id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        name              VARCHAR(255) NOT NULL,
+        favorite_album_id INTEGER,
+        FOREIGN KEY(favorite_album_id) REFERENCES album(album_id)
+    );
+
+    CREATE TABLE album (
+        album_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+        name        VARCHAR(255) NOT NULL,
+        producer_id INTEGER,
+        FOREIGN KEY(producer_id) REFERENCES people(person_id)
+    );
+
+Say producer Rick Rubin produced ZZ Top's album "La Futura", and that it is his
+favorite album. You would specify that relationship in this way:
+
+    person_rick_rubin => {
+        new => 'Person',
+        using => { name => 'Rick Rubin' },
+        requires => {
+            album_la_futura => {
+                our      => 'favorite_album_id'
+                their    => 'album_id',
+                deferred => 1,
+            },
+        },
+    },
+    album_la_futura => {
+        new => 'Album',
+        using => { name => 'La Futura' },
+        requires => {
+            person_rick_rubin => {
+                our      => 'producer_id',
+                their    => 'person_id',
+                deferred => 1,
+            },
+        },
+    },
+
+This has the net effect of creating both results, then backfilling the
+appropriate values on each result. Note that both sides of the relationship
+are marked as C<deferred>.
+
+If the foreign key on one of the two tables was defined as C<NOT NULL>:
+
+    CREATE TABLE album (
+        album_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+        name        VARCHAR(255) NOT NULL,
+        producer_id INTEGER NOT NULL,
+        FOREIGN KEY(producer_id) REFERENCES people(person_id)
+    );
+
+Then that side of the relationship would not be deferrable, and should be
+defined thusly:
+
+    person_rick_rubin => {
+        # same as above
+    },
+    album_la_futura => {
+        new => 'Album',
+        using => { name => 'La Futura' },
+        requires => {
+            person_rick_rubin => {
+                our      => 'producer_id',
+                their    => 'person_id',
+                # Nope!
+                # deferred => 1,
+            },
+        },
+    },
+
+This would have the net effect of creating the C<person_rick_rubin> result,
+then creating the C<album_la_futura> result including the foreign key to it's
+producer, and finally backfilling the C<favorite_album_id> foreign key on the
+C<producer_rick_rubin> result.
+
 =head2 Groups
 
 Sometimes you want to load multiple fixtures at once. One way to do this is

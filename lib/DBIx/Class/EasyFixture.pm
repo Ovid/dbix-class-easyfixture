@@ -93,7 +93,7 @@ sub _get_object {
     my $object = $self->_get_result($name);
     unless ($object) {
         my $args = $definition->constructor_data;
-        if ( my $requires = $definition->requires ) {
+        if ( my $requires = $definition->requires_pre ) {
             while ( my ( $parent, $methods ) = each %$requires ) {
                 my $other = $self->_get_result($parent)
                   or croak("Panic: required object '$parent' not loaded");
@@ -116,7 +116,7 @@ sub _load {
         return $self->_get_result( $definition->name );
     }
 
-    if ( my $requires = $definition->requires ) {
+    if ( my $requires = $definition->requires_pre ) {
         $self->_load_previous_fixtures($requires);
     }
 
@@ -124,6 +124,10 @@ sub _load {
 
     if ( my $next = $definition->next ) {
         $self->_load_next_fixtures($next);
+    }
+
+    if ( my $deferred = $definition->requires_defer ) {
+        $self->_load_deferred_fixtures( $object, $deferred );
     }
     return $object;
 }
@@ -142,19 +146,35 @@ sub _load_next_fixtures {
     foreach my $fixture (@$next) {
         my $definition = $self->_get_definition_object($fixture);
 
-        # a fixture may say "load these other fixtures next", but if that
-        # appens, those "next" fixtures may have different parent fixtures
-        # that they require, so we load them here.
-        if ( my $requires = $definition->requires ) {
-            while ( my ( $parent, $methods ) = each %$requires ) {
-                $self->_load( $self->_get_definition_object($parent) )
-                  || croak("Panic: related object '$parent' not loaded");
-            }
-        }
+        # XXX This is done when _load calls _load_previous_fixtures,
+        # so it is not necessary here
+        #
+        # # a fixture may say "load these other fixtures next", but if that
+        # # happens, those "next" fixtures may have different parent fixtures
+        # # that they require, so we load them here.
+        # if ( my $requires = $definition->requires_pre ) {
+        #     while ( my ( $parent, $methods ) = each %$requires ) {
+        #         $self->_load( $self->_get_definition_object($parent) )
+        #           || croak("Panic: related object '$parent' not loaded");
+        #     }
+        # }
 
         # ... and *now* we can load the fixture
         $self->_load($definition);
     }
+}
+
+sub _load_deferred_fixtures {
+    my ( $self, $object, $deferred) = @_;
+
+    my $update_args = {};
+    while( my ($fixture, $methods) = each( %{$deferred} ) ) {
+        my $other = $self->_load( $self->_get_definition_object($fixture) );
+        my ( $our, $their ) = @{$methods}{qw/our their/};
+        $update_args->{$our} = $other->$their;
+    }
+
+    $object->update( $update_args );
 }
 
 sub unload {
@@ -493,3 +513,5 @@ that later when it becomes more clear how to best handle them.
 
 Track what fixtures are requested and what fixtures are loaded (and in which
 order).  This makes for better error reporting.
+
+=back

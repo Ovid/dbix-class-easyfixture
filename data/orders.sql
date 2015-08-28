@@ -2,7 +2,9 @@ CREATE TABLE people (
     person_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name      VARCHAR(255) NOT NULL,
     email     VARCHAR(255)     NULL UNIQUE,
-    birthday  DATETIME     NOT NULL
+    birthday  DATETIME     NOT NULL,
+    favorite_album_id INTEGER,
+    FOREIGN KEY(favorite_album_id) REFERENCES albums(album_id) DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE customers (
@@ -32,4 +34,11 @@ CREATE TABLE order_item (
     price         REAL    NOT NULL,
     FOREIGN KEY(item_id)  REFERENCES items(item_id),
     FOREIGN KEY(order_id) REFERENCES orders(order_id)
+);
+
+CREATE TABLE albums (
+    album_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    producer_id INTEGER,
+    FOREIGN KEY(producer_id) REFERENCES people(person_id) DEFERRABLE INITIALLY DEFERRED
 );
