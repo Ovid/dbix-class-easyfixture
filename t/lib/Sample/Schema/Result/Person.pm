@@ -58,6 +58,12 @@ __PACKAGE__->table("people");
   data_type: 'datetime'
   is_nullable: 0
 
+=head2 favorite_album_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -69,6 +75,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 255 },
   "birthday",
   { data_type => "datetime", is_nullable => 0 },
+  "favorite_album_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -99,6 +107,21 @@ __PACKAGE__->add_unique_constraint("email_unique", ["email"]);
 
 =head1 RELATIONS
 
+=head2 albums
+
+Type: has_many
+
+Related object: L<Sample::Schema::Result::Album>
+
+=cut
+
+__PACKAGE__->has_many(
+  "albums",
+  "Sample::Schema::Result::Album",
+  { "foreign.producer_id" => "self.person_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 customer
 
 Type: might_have
@@ -114,9 +137,29 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 favorite_album
 
-# Created by DBIx::Class::Schema::Loader v0.07039 @ 2014-02-13 13:30:36
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:a88+qBFOLWbatHQZNXYqAg
+Type: belongs_to
+
+Related object: L<Sample::Schema::Result::Album>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "favorite_album",
+  "Sample::Schema::Result::Album",
+  { album_id => "favorite_album_id" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "NO ACTION",
+    on_update     => "NO ACTION",
+  },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-19 13:13:01
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:H/ykZGjgIBkgXTeBGU47pQ
 
 sub is_customer {
     my $self = shift;

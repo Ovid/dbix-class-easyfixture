@@ -175,6 +175,31 @@ my %definition_for = (
         using => { name => "Chain 4", price => 4 },
         next  => [qw/item_1/], # deliberate circular definition
     },
+
+    # these next two items are related, and designed to cover
+    # a scenario wherein two entities have a bi-directional relationship
+    producer => {
+        new => 'Person',
+        using => { name => 'Rick Rubin', birthday => $birthday },
+        requires => {
+            album => {
+                our => 'favorite_album_id',
+                their => 'album_id',
+                deferred => 1,
+            },
+        },
+    },
+    album => {
+        new => 'Album',
+        using => { name => 'La Futura' },
+        requires => {
+            producer => {
+                our => 'producer_id',
+                their => 'person_id',
+                deferred => 1,
+            },
+        },
+    },
 );
 
 sub get_definition {
