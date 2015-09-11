@@ -4,7 +4,7 @@ DBIx::Class::EasyFixture - Easy fixtures with DBIx::Class
 
 # VERSION
 
-version 0.11
+version 0.12
 
 # SYNOPSIS
 
@@ -302,13 +302,13 @@ Curtis "Ovid" Poe, `<ovid at cpan.org>`
     Track what fixtures are requested and what fixtures are loaded (and in which
     order).  This makes for better error reporting.
 
-    # AUTHOR
+# AUTHOR
 
-    Curtis "Ovid" Poe <ovid@cpan.org>
+Curtis "Ovid" Poe &lt;ovid@cpan.org>
 
-    # COPYRIGHT AND LICENSE
+# COPYRIGHT AND LICENSE
 
-    This software is copyright (c) 2014 by Curtis "Ovid" Poe.
+This software is copyright (c) 2014 by Curtis "Ovid" Poe.
 
-    This is free software; you can redistribute it and/or modify it under
-    the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
