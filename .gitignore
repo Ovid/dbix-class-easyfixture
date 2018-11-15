@@ -1,0 +1,11 @@
+/.ackrc
+/.build
+*\.bak
+/Makefile
+/Makefile.old
+/META.*
+/MYMETA.*
+/blib
+/pm_to_blib
+/DBIx-Class-EasyFixture-*/
+/DBIx-Class-EasyFixture-*.tar.gz
