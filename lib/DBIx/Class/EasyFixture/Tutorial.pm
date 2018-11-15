@@ -26,7 +26,7 @@ particular format. Here's one way to do it, using a big hash (there are plenty
 of other ways to do this, but this is easy for a tutorial.
 
     package My::Fixtures;
-    use Moose;
+    use Moo;    # (Moose is also fine)
     extends 'DBIx::Class::EasyFixture';
 
     my %definition_for = (
@@ -107,7 +107,7 @@ The format of simple fixture is:
 Putting the above together, we get this:
 
     package My::Fixtures;
-    use Moose;
+    use Moo;
     use DateTime;
     extends 'DBIx::Class::EasyFixture';
     use namespace::autoclean;
