@@ -3,27 +3,29 @@ package DBIx::Class::EasyFixture;
 # ABSTRACT: Easy fixtures with DBIx::Class
 
 use 5.008003;
-use Moose;
+use Moo;
+use MooX::HandlesVia;
+use Types::Standard qw(InstanceOf Bool HashRef);
 use Carp;
 use aliased 'DBIx::Class::EasyFixture::Definition';
 use namespace::autoclean;
 
 has 'schema' => (
     is       => 'ro',
-    isa      => 'DBIx::Class::Schema',
+    isa      => InstanceOf['DBIx::Class::Schema'],
     required => 1,
 );
 has '_in_transaction' => (
     is      => 'rw',
-    isa     => 'Bool',
+    isa     => Bool,
     default => 0,
     writer  => '_set_in_transaction',
 );
 has '_cache' => (
-    traits  => ['Hash'],
     is      => 'ro',
-    isa     => 'HashRef',
+    isa     => HashRef,
     default => sub { {} },
+    handles_via => 'Hash',
     handles => {
         _set_fixture => 'set',
         _get_result  => 'get',
@@ -33,7 +35,7 @@ has '_cache' => (
 );
 has 'no_transactions' => (
     is      => 'ro',
-    isa     => 'Bool',
+    isa     => Bool,
     default => 0,
 );
 
@@ -206,8 +208,6 @@ sub DEMOLISH {
     $self->unload;
 }
 
-__PACKAGE__->meta->make_immutable;
-
 1;
 
 __END__
@@ -215,7 +215,7 @@ __END__
 =head1 SYNOPSIS
 
     package My::Fixtures;
-    use Moose;
+    use Moo;    # (Moose is also fine)
     extends 'DBIx::Class::EasyFixture';
 
     sub get_definition    { ... }

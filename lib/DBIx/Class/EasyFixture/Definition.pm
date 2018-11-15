@@ -2,8 +2,9 @@ package DBIx::Class::EasyFixture::Definition;
 
 # ABSTRACT: Validate fixture definitions
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use MooX::HandlesVia;
+use Types::Standard qw(Str HashRef ArrayRef);
 use Carp;
 use Storable 'dclone';
 use Scalar::Util 'blessed';
@@ -11,21 +12,21 @@ use namespace::autoclean;
 
 has 'name' => (
     is       => 'ro',
-    isa      => 'Str',
+    isa      => Str,
     required => 1,
 );
 
 has 'definition' => (
     is       => 'ro',
-    isa      => 'HashRef',
+    isa      => HashRef,
     required => 1,
 );
 
 has 'fixtures' => (
-    traits   => ['Hash'],
     is       => 'ro',
-    isa      => 'HashRef',
+    isa      => HashRef,
     required => 1,
+    handles_via => 'Hash',
     handles  => {
         fixture_exists => 'exists',
     },
@@ -33,7 +34,7 @@ has 'fixtures' => (
 
 has 'group' => (
     is  => 'ro',
-    isa => 'ArrayRef[Str]',
+    isa => ArrayRef[Str],
 );
 
 around 'BUILDARGS' => sub {
@@ -210,8 +211,6 @@ sub _validate_required_objects {
         }
     }
 }
-
-__PACKAGE__->meta->make_immutable;
 
 1;
 

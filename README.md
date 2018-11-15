@@ -9,7 +9,7 @@ version 0.12
 # SYNOPSIS
 
     package My::Fixtures;
-    use Moose;
+    use Moo;    # (Moose is also fine)
     extends 'DBIx::Class::EasyFixture';
 
     sub get_definition    { ... }
