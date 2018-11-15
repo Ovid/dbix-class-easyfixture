@@ -153,7 +153,8 @@ sub _validate_class_and_data {
 
 sub _validate_next {
     my $self = shift;
-    my $next = $self->next or return;
+    my $next = $self->next;
+    return if not $next;
 
     $next = [$next] unless 'ARRAY' eq ref $next;
     my $name = $self->name;
@@ -177,7 +178,8 @@ sub _validate_required_objects {
 
     my $name = join '.' => $self->name, $self->resultset_class, 'requires';
 
-    my $requires = $self->requires or return;
+    my $requires = $self->requires;
+    return if not $requires;
     unless ( 'HASH' eq ref $requires ) {
         croak("$name does not appear to be a hashref");
     }
