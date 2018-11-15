@@ -218,7 +218,7 @@ __END__
     use Moose;
     extends 'DBIx::Class::EasyFixture';
 
-    sub get_fixture       { ... }
+    sub get_definition    { ... }
     sub all_fixture_names { ... }
 
 And in your test code:
