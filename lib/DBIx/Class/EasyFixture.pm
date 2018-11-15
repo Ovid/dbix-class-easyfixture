@@ -318,7 +318,7 @@ name. However, C<fixture_loaded> still works as an alias to C<is_loaded>.
 If you attempt to load a fixture, a transaction is started and it will be
 rolled back when you call C<unload()> or when the fixture object falls out of
 scope. If, for some reason, you do not want transactions (for example, if you
-need to controll them manually), you can use a true value with the
+need to control them manually), you can use a true value with the
 C<no_transactions> argument.
 
     my $fixtures = My::Fixtures->new(

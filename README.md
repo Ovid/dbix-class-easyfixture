@@ -112,7 +112,7 @@ name. However, `fixture_loaded` still works as an alias to `is_loaded`.
 If you attempt to load a fixture, a transaction is started and it will be
 rolled back when you call `unload()` or when the fixture object falls out of
 scope. If, for some reason, you do not want transactions (for example, if you
-need to controll them manually), you can use a true value with the
+need to control them manually), you can use a true value with the
 `no_transactions` argument.
 
     my $fixtures = My::Fixtures->new(
@@ -304,7 +304,7 @@ Curtis "Ovid" Poe, `<ovid at cpan.org>`
 
 # AUTHOR
 
-Curtis "Ovid" Poe &lt;ovid@cpan.org>
+Curtis "Ovid" Poe <ovid@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
