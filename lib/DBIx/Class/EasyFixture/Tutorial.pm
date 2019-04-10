@@ -149,7 +149,7 @@ To use that in your test code:
     $fixtures->load('basic_person');
 
     my $person = $schema->resultset('Person')->find( { email => 'not@home.com' } );
-    is $person->name 'bob', 'Everything is OK. We found bob';
+    is $person->name, 'Bob', 'Everything is OK. We found bob';
 
     $fixtures->unload; # fixtures removed (transaction is rolled back)
 
