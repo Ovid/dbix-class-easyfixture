@@ -266,7 +266,7 @@ failure.
 
     my @fixture_names = $fixtures->all_fixture_names;
 
-Must overridden in your subclass. Should return a list (not an array ref!) of
+Must be overridden in your subclass. Should return a list (not an array ref!) of
 all fixture names available. This is used internally to generate error
 messages if a fixture attempts to reference a non-existent fixture in its
 C<next> or C<requires> section.
